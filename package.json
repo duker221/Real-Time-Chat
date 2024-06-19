@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/duker221/frontend-project-12#readme",
   "dependencies": {
-    "@hexlet/chat-server": "^2.0.3"
+    "@fastify/static": "^7.0.4",
+    "@hexlet/chat-server": "^2.0.3",
+    "react-scripts": "5.0.1"
   }
 }
