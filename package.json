@@ -2,13 +2,13 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "[![Actions Status](https://github.com/duker221/frontend-project-12/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/duker221/frontend-project-12/actions)",
-  "main": "index.js",
+ 
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx start-server -s ./frontend/build -p 5001",
     "build": "npm run build --prefix frontend"
   },
-  "proxy": "http://localhost:5001",
+  
   "repository": {
     "type": "git",
     "url": "git+https://github.com/duker221/frontend-project-12.git"
