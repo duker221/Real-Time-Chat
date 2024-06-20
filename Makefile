@@ -1,8 +1,8 @@
 install:
-    cd frontend && npm install
+    npm install
 
 build: install
-    cd frontend && npm run build
+    npm run build
 
 start:
 	npx start-server -s ./frontend/build
