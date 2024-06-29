@@ -2,22 +2,70 @@ import React, { useEffect, useState } from "react";
 import Navigation from "./Navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchChannels } from "../slices/channelsSlice";
+import { fetchMessages, addMessage, sendMessage } from "../slices/messageSlice";
+import io from "socket.io-client";
+
 const Chat = () => {
   const token = useSelector((state) => state.auth.token);
+  const username = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   const channels = useSelector((state) => state.channels.channels);
-  const [activeChanel, setActiveChanel] = useState(0);
-
-  const setActiveChannelIndex = (index) => {
-    console.log(channels[index].name);
-    setActiveChanel(index);
-  };
+  const [activeChannel, setActiveChannel] = useState(0);
+  const messages = useSelector((state) => state.message.messages);
+  const [messageCount, setMessageCount] = useState(0);
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
     if (token) {
       dispatch(fetchChannels(token));
+      dispatch(fetchMessages(token));
     }
   }, [dispatch, token]);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      setMessageCount(messages.length);
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    const newSocket = io("http://localhost:5001");
+    setSocket(newSocket);
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("newMessage", (newMessage) => {
+        if (newMessage.username !== username) {
+          dispatch(addMessage(newMessage));
+        }
+      });
+      return () => {
+        socket.off("newMessage");
+      };
+    }
+  }, [socket, dispatch, username]);
+
+  const handleMessageSubmit = async (e) => {
+    e.preventDefault();
+    const messageBody = e.target.body.value;
+    if (messageBody && channels[activeChannel] && token) {
+      const message = {
+        body: messageBody,
+        channelId: channels[activeChannel].id,
+        username: username,
+      };
+      try {
+        await dispatch(sendMessage({ message, token }));
+        e.target.body.value = "";
+      } catch (error) {
+        console.error("Ошибка при отправке сообщения:", error);
+      }
+    }
+  };
 
   return (
     <div className="d-flex flex-column h-100">
@@ -53,9 +101,9 @@ const Chat = () => {
                   <button
                     type="button"
                     className={`w-100 rounded-0 text-start btn ${
-                      index === activeChanel ? "btn-secondary" : null
+                      index === activeChannel ? "btn-secondary" : null
                     }`}
-                    onClick={() => setActiveChannelIndex(index)}
+                    onClick={() => setActiveChannel(index)}
                   >
                     <span className="me-1">#</span>
                     {channel.name}
@@ -67,19 +115,29 @@ const Chat = () => {
           <div className="col p-0 h-100">
             <div className="d-flex flex-column h-100">
               <div className="bg-light mb-4 p-3 shadow-sm small">
-                {channels[activeChanel] && (
+                {channels[activeChannel] && (
                   <p className="m-0">
-                    <b># {channels[activeChanel].name}</b>
+                    <b># {channels[activeChannel].name}</b>
                   </p>
                 )}
-                <span className="text-muted">0 сообщений</span>
+                <span className="text-muted">{messageCount} сообщений</span>
               </div>
               <div
                 id="messages-box"
-                className="chat-messages overflow-auto px-5 "
-              ></div>
+                className="chat-messages overflow-auto px-5"
+              >
+                {messages.map((message) => (
+                  <div key={message.id}>
+                    <b>{message.username}:</b> {message.body}
+                  </div>
+                ))}
+              </div>
               <div className="mt-auto px-5 py-3">
-                <form noValidate className="py-1 border rounded-2">
+                <form
+                  noValidate
+                  className="py-1 border rounded-2"
+                  onSubmit={handleMessageSubmit}
+                >
                   <div className="input-group has-validation">
                     <input
                       name="body"

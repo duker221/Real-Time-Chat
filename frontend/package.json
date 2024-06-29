@@ -17,6 +17,7 @@
     "react-router-dom": "^6.23.1",
     "react-scripts": "^3.0.1",
     "redux": "^5.0.1",
+    "socket.io-client": "^4.7.5",
     "web-vitals": "^2.1.4"
   },
   "proxy": "http://localhost:5001",
@@ -26,6 +27,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "type": "module",
   "browserslist": {
     "production": [
       ">0.2%",

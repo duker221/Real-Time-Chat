@@ -7,6 +7,8 @@ export const loginUser = createAsyncThunk(
     try {
       const response = await axios.post("api/v1/login", { username, password });
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", username);
+      
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -17,7 +19,7 @@ export const loginUser = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: null,
+    user: localStorage.getItem("user") || null,
     token: localStorage.getItem("token") || null,
     status: "idle",
     error: null,
@@ -25,6 +27,7 @@ const authSlice = createSlice({
   reducers: {
     logoutUser(state) {
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
       state.user = null;
       state.token = null;
       state.status = 'idle';
@@ -39,11 +42,11 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.token = action.payload.token;
-        // Также ты можешь обновить state.user, если в ответе сервера есть данные пользователя
+        state.user = localStorage.getItem("user");
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.payload; // Предполагается, что ошибка возвращается в payload
+        state.error = action.payload;
       });
   },
 });
