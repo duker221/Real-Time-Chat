@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
-import Navigation from "./Navigation";
+import Navigation from "../Navigation";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchChannels } from "../slices/channelsSlice";
-import { fetchMessages, addMessage, sendMessage } from "../slices/messageSlice";
+import NewChannelModal from "../Modal/CreateNewChannel";
+import { fetchChannels } from "../../slices/channelsSlice";
+import {
+  fetchMessages,
+  addMessage,
+  sendMessage,
+} from "../../slices/messageSlice";
 import io from "socket.io-client";
+import { modalRoot } from "../../index";
 
 const Chat = () => {
   const token = useSelector((state) => state.auth.token);
@@ -14,7 +20,7 @@ const Chat = () => {
   const messages = useSelector((state) => state.message.messages);
   const [messageCount, setMessageCount] = useState(0);
   const [socket, setSocket] = useState(null);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
     if (token) {
       dispatch(fetchChannels(token));
@@ -29,7 +35,7 @@ const Chat = () => {
   }, [messages]);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:5001");
+    const newSocket = io("http://localhost:3000");
     setSocket(newSocket);
     return () => {
       newSocket.disconnect();
@@ -66,9 +72,15 @@ const Chat = () => {
       }
     }
   };
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
-    <div className="d-flex flex-column h-100">
+    <>
       <Navigation />
       <div className="container h-100 my-4 overflow-hidden rounded shadow">
         <div className="row h-100 bg-white flex-md-row">
@@ -78,6 +90,7 @@ const Chat = () => {
               <button
                 type="button"
                 className="p-0 text-primary btn btn-group-vertical"
+                onClick={handleOpenModal}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -126,11 +139,13 @@ const Chat = () => {
                 id="messages-box"
                 className="chat-messages overflow-auto px-5"
               >
-                {messages.map((message) => (
-                  <div key={message.id}>
-                    <b>{message.username}:</b> {message.body}
-                  </div>
-                ))}
+                {messages.map((message) =>
+                  message.channelId === channels[activeChannel]?.id ? (
+                    <div key={message.id}>
+                      <b>{message.username}:</b> {message.body}
+                    </div>
+                  ) : null
+                )}
               </div>
               <div className="mt-auto px-5 py-3">
                 <form
@@ -170,8 +185,20 @@ const Chat = () => {
             </div>
           </div>
         </div>
+
+        <div className="Toastify"></div>
       </div>
-    </div>
+
+      {isModalOpen && (
+        <>
+          <NewChannelModal
+            onClose={handleCloseModal}
+            isModalOpen={isModalOpen}
+            
+          />
+        </>
+      )}
+    </>
   );
 };
 

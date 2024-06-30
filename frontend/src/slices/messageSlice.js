@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:5001");
+
 
 export const fetchMessages = createAsyncThunk(
   "messages/fetchMessages",
@@ -79,6 +79,5 @@ const messageSlice = createSlice({
   },
 });
 
-// Экспортируем экшены и редьюсер
 export const { addMessage } = messageSlice.actions;
 export default messageSlice.reducer;
