@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Navigation from "../Navigation";
 import { useSelector, useDispatch } from "react-redux";
-import NewChannelModal from "../Modal/CreateNewChannel";
-import { fetchChannels } from "../../slices/channelsSlice";
+import {
+  fetchChannels,
+  removeChannel,
+  editChannel,
+} from "../../slices/channelsSlice";
 import {
   fetchMessages,
   addMessage,
   sendMessage,
 } from "../../slices/messageSlice";
 import io from "socket.io-client";
-import { modalRoot } from "../../index";
+import Dropdown from "react-bootstrap/Dropdown";
+import NewChannelModal from "../Modal/CreateNewChannel";
+import EditChannelModal from "../Modal/EditChannelName";
 
 const Chat = () => {
   const token = useSelector((state) => state.auth.token);
@@ -21,6 +26,10 @@ const Chat = () => {
   const [messageCount, setMessageCount] = useState(0);
   const [socket, setSocket] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const channelNames = channels.map((channel) => channel.name);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingChannel, setEditingChannel] = useState(null);
+
   useEffect(() => {
     if (token) {
       dispatch(fetchChannels(token));
@@ -35,7 +44,7 @@ const Chat = () => {
   }, [messages]);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:3000");
+    const newSocket = io("http://localhost:5001");
     setSocket(newSocket);
     return () => {
       newSocket.disconnect();
@@ -72,11 +81,37 @@ const Chat = () => {
       }
     }
   };
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleDeleteChannel = (id) => {
+    dispatch(removeChannel({ id, token }));
+    setActiveChannel(0);
+  };
+
+  const startEditing = (channel) => {
+    setEditingChannel(channel);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingChannel(null);
+  };
+
+  const handleEditChannel = async (id, newName) => {
+    try {
+      await dispatch(editChannel({ id, token, newName }));
+      setEditingChannel(null);
+    } catch (error) {
+      console.error("Ошибка при сохранении канала:", error);
+    }
   };
 
   return (
@@ -111,16 +146,49 @@ const Chat = () => {
             >
               {channels.map((channel, index) => (
                 <li key={channel.id} className="nav-item w-100">
-                  <button
-                    type="button"
-                    className={`w-100 rounded-0 text-start btn ${
-                      index === activeChannel ? "btn-secondary" : null
-                    }`}
-                    onClick={() => setActiveChannel(index)}
-                  >
-                    <span className="me-1">#</span>
-                    {channel.name}
-                  </button>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <button
+                      type="button"
+                      className={`w-100 rounded-0 text-start btn ${
+                        index === activeChannel ? "btn-secondary" : null
+                      }`}
+                      onClick={() => setActiveChannel(index)}
+                    >
+                      <span className="me-1">#</span>
+                      {channel.name}
+                    </button>
+
+                    {channel.removable && (
+                      <Dropdown>
+                        <Dropdown.Toggle
+                          split
+                          variant={index === activeChannel ? "secondary" : null}
+                          className="flex-grow-0 dropdown-toggle dropdown-toggle-split btn"
+                          id={`dropdownMenuButton-${channel.id}`}
+                          style={{
+                            borderBottomLeftRadius: "0",
+                            borderTopLeftRadius: "0",
+                          }}
+                        >
+                          <span className="visually-hidden">
+                            Управление каналом
+                          </span>
+                        </Dropdown.Toggle>
+
+                        <Dropdown.Menu>
+                          <Dropdown.Item
+                            onClick={() => handleDeleteChannel(channel.id)}
+                          >
+                            Удалить
+                          </Dropdown.Item>
+                          <Dropdown.Item onClick={() => startEditing(channel)}>
+                            Переименовать
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    )}
+                  </div>
+                  
                 </li>
               ))}
             </ul>
@@ -185,18 +253,26 @@ const Chat = () => {
             </div>
           </div>
         </div>
-
         <div className="Toastify"></div>
       </div>
 
       {isModalOpen && (
-        <>
-          <NewChannelModal
-            onClose={handleCloseModal}
-            isModalOpen={isModalOpen}
-            
-          />
-        </>
+        <NewChannelModal
+          onClose={handleCloseModal}
+          isModalOpen={isModalOpen}
+          channelNames={channelNames}
+          token={token}
+          lastChannel={setActiveChannel}
+        />
+      )}
+
+      {editingChannel && (
+        <EditChannelModal
+          onClose={handleCloseEditModal}
+          isModalOpen={isEditModalOpen}
+          channel={editingChannel}
+          token={token}
+        />
       )}
     </>
   );

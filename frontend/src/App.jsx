@@ -4,7 +4,7 @@ import Login from "./components/MainPage";
 import NotFoundPage from "./components/NotFoundPage";
 import Chat from "./components/Chat/Chat";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import { Registration } from "./components/Registration/Registration";
 function App() {
   return (
     <BrowserRouter>
@@ -20,6 +20,7 @@ function App() {
         />
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<NotFoundPage />} />
+        <Route path="signup" element={<Registration/>}/>
       </Routes>
       </div>
     </BrowserRouter>

@@ -1,70 +1,100 @@
-import React, { useEffect, useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
-import * as yup from "yup";
-import { Button, Form, InputGroup, Modal as BsModal } from "react-bootstrap";
+import { useFormik } from "formik";
+import { Modal, Button, Spinner } from "react-bootstrap";
+import { schema } from "../../validate";
+import { createChannels } from "../../slices/channelsSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchChannels } from "../../slices/channelsSlice";
 
-const schema = yup.object().shape({
-  name: string()
-    .trim()
-    .required("validation.required")
-    .min(3, "validation.min")
-    .max(20, "validation.max")
-    .notOneOf(channels, "validation.uniq"),
-});
+const NewChannelModal = ({
+  onClose,
+  isModalOpen,
+  channelNames,
+  token,
+  lastChannel,
+}) => {
+  const dispatch = useDispatch();
+  const channels = useSelector((state) => state.channels.channels);
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+    },
+    validationSchema: schema(channelNames),
+    validateOnBlur: true,
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        setSubmitting(true);
 
-const NewChannelModal = ({ onClose, isModalOpen }) => {
-  const body = document.body;
-  const changeBodyIfModalOpen = () => {
-    body.classList.add("modal-open");
-    body.style.overflow = "hidden";
-    body.setAttribute("data-rr-ui-modal-open", "");
-  };
-
-  const removeBodyStyle = () => {
-    body.classList.remove("modal-open");
-    body.style.overflow = "";
-    body.removeAttribute("data-rr-ui-modal-open", "");
-  };
+        const data = await dispatch(
+          createChannels({ name: values.name, token: token })
+        );
+        console.log("Канал успешно создан!", data);
+        lastChannel(channels.length);
+        dispatch(fetchChannels(token));
+        onClose();
+      } catch (error) {
+        console.error("Ошибка при создании канала:", error);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
 
   useEffect(() => {
     if (isModalOpen) {
-      changeBodyIfModalOpen();
+      document.body.classList.add("modal-open");
+      document.body.style.overflow = "hidden";
+      document.body.setAttribute("data-rr-ui-modal-open", "true");
     } else {
-      removeBodyStyle();
+      document.body.classList.remove("modal-open");
+      document.body.style.overflow = "";
+      document.body.removeAttribute("data-rr-ui-modal-open", "true");
     }
     return () => {
-      removeBodyStyle();
+      document.body.classList.remove("modal-open");
+      document.body.style.overflow = "";
+      document.body.removeAttribute("data-rr-ui-modal-open", "true");
     };
   }, [isModalOpen]);
 
   return ReactDOM.createPortal(
-    <>
-      <div className="fade modal-backdrop show"></div>
-      <div
-        role="dialog"
-        aria-modal="true"
-        className="fade modal show"
-        tabIndex={-1}
-        style={{ display: "block" }}
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header">
-              <div className="modal-title h4">Добавить канал</div>
-              <button
-                type="button"
-                aria-label="Close"
-                data-bs-dismiss="modal"
-                className="btn btn-close"
-                onClick={onClose}
-              ></button>
-              <div className="modal-body"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>,
+    <Modal show={isModalOpen} onHide={onClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Добавить канал</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <form onSubmit={formik.handleSubmit}>
+          <input
+            name="name"
+            className={`form-control ${
+              formik.errors.name && formik.touched.name ? "is-invalid" : ""
+            }`}
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            autoFocus="autofocus"
+          />
+          <div className="invalid-feedback">{formik.errors.name}</div>
+        </form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onClose}>
+          Отменить
+        </Button>
+        <Button
+          variant="primary"
+          onClick={formik.handleSubmit}
+          disabled={!formik.isValid || formik.isSubmitting}
+        >
+          {formik.isSubmitting ? (
+            <Spinner animation="border" size="sm" />
+          ) : (
+            "Отправить"
+          )}
+        </Button>
+      </Modal.Footer>
+    </Modal>,
     document.body
   );
 };
