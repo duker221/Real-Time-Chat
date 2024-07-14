@@ -26,7 +26,7 @@ const Form = () => {
           console.log(originalPromiseResult);
           navigate("/");
         })
-        .catch((rejectedValueOrSerializedError) => {
+        .catch((e) => {
           setError(true);
         });
     },

@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navigation from "../Navigation";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  fetchChannels,
-  removeChannel,
-  editChannel,
-} from "../../slices/channelsSlice";
+import { fetchChannels, removeChannel } from "../../slices/channelsSlice";
 import {
   fetchMessages,
   addMessage,
@@ -15,7 +11,7 @@ import io from "socket.io-client";
 import Dropdown from "react-bootstrap/Dropdown";
 import NewChannelModal from "../Modal/CreateNewChannel";
 import EditChannelModal from "../Modal/EditChannelName";
-
+import { QuitBtn } from "../Button/QuitBtn";
 const Chat = () => {
   const token = useSelector((state) => state.auth.token);
   const username = useSelector((state) => state.auth.user);
@@ -44,7 +40,7 @@ const Chat = () => {
   }, [messages]);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:5001");
+    const newSocket = io("http://localhost:3000");
     setSocket(newSocket);
     return () => {
       newSocket.disconnect();
@@ -105,18 +101,9 @@ const Chat = () => {
     setEditingChannel(null);
   };
 
-  const handleEditChannel = async (id, newName) => {
-    try {
-      await dispatch(editChannel({ id, token, newName }));
-      setEditingChannel(null);
-    } catch (error) {
-      console.error("Ошибка при сохранении канала:", error);
-    }
-  };
-
   return (
     <>
-      <Navigation />
+      <Navigation child={<QuitBtn />} />
       <div className="container h-100 my-4 overflow-hidden rounded shadow">
         <div className="row h-100 bg-white flex-md-row">
           <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
@@ -188,7 +175,6 @@ const Chat = () => {
                       </Dropdown>
                     )}
                   </div>
-                  
                 </li>
               ))}
             </ul>

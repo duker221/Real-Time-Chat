@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Button, Spinner, Form, Alert } from "react-bootstrap";
+import { Modal, Button, Spinner, Form } from "react-bootstrap";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { editChannel } from "../../slices/channelsSlice";

@@ -47,7 +47,7 @@ export const removeChannel = createAsyncThunk(
   "channels/removeChannel",
   async ({ id, token }) => {
     try {
-      const response = await axios.delete(`/api/v1/channels/${id}`, {
+      await axios.delete(`/api/v1/channels/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
