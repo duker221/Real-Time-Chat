@@ -1,8 +1,9 @@
-import React from "react";
-import Button from "react-bootstrap/Button";
+import React from 'react';
+import Button from 'react-bootstrap/Button';
+
 export const QuitBtn = () => {
   const handleClick = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     window.location.reload();
   };
 

@@ -2,10 +2,12 @@ import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import { useFormik } from "formik";
 import { Modal, Button, Spinner } from "react-bootstrap";
-import { schema } from "../../validate";
-import { createChannels } from "../../slices/channelsSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchChannels } from "../../slices/channelsSlice";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import leoProfanity from "../../leoProfanityConfig";
+import { schema } from "../../validate";
+import { createChannels, fetchChannels } from "../../slices/channelsSlice";
 
 const NewChannelModal = ({
   onClose,
@@ -27,12 +29,13 @@ const NewChannelModal = ({
         setSubmitting(true);
 
         const data = await dispatch(
-          createChannels({ name: values.name, token: token })
+          createChannels({ name: leoProfanity.clean(values.name), token })
         );
         console.log("Канал успешно создан!", data);
         lastChannel(channels.length);
         dispatch(fetchChannels(token));
         onClose();
+        toast.success("Канал создан!");
       } catch (error) {
         console.error("Ошибка при создании канала:", error);
       } finally {

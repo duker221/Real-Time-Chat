@@ -1,12 +1,16 @@
 import React from "react";
-import { Modal, Button, Spinner, Form } from "react-bootstrap";
+import {
+  Modal, Button, Spinner, Form
+} from "react-bootstrap";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { editChannel } from "../../slices/channelsSlice";
-import { fetchChannels } from "../../slices/channelsSlice";
+import { toast } from "react-toastify";
+import { editChannel, fetchChannels } from "../../slices/channelsSlice";
 import { schema } from "../../validate";
 
-const EditChannelModal = ({ onClose, isModalOpen, channel, token }) => {
+const EditChannelModal = ({
+  onClose, isModalOpen, channel, token
+}) => {
   const dispatch = useDispatch();
   const channels = useSelector((state) => state.channels.channels);
 
@@ -23,8 +27,10 @@ const EditChannelModal = ({ onClose, isModalOpen, channel, token }) => {
         );
         dispatch(fetchChannels(token));
         onClose();
+        toast.success("Канал переименован!");
       } catch (error) {
         console.error("Ошибка при переименовании канала:", error);
+        toast.error("");
       } finally {
         setSubmitting(false);
       }
@@ -47,35 +53,33 @@ const EditChannelModal = ({ onClose, isModalOpen, channel, token }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               isInvalid={formik.touched.name && formik.errors.name}
-              
             />
             <Form.Control.Feedback type="invalid">
               {formik.errors.name}
             </Form.Control.Feedback>
           </Form.Group>
-          
         </Form>
       </Modal.Body>
       <Modal.Footer>
-      <Button
-            variant="secondary"
-            onClick={onClose}
-            disabled={formik.isSubmitting}
-          >
-            Отменить
-          </Button>
-          <Button
-            variant="primary"
-            type="submit"
-            disabled={formik.isSubmitting}
-            onClick={formik.handleSubmit}
-          >
-            {formik.isSubmitting ? (
-              <Spinner animation="border" size="sm" />
-            ) : (
-              "Отправить"
-            )}
-          </Button>
+        <Button
+          variant="secondary"
+          onClick={onClose}
+          disabled={formik.isSubmitting}
+        >
+          Отменить
+        </Button>
+        <Button
+          variant="primary"
+          type="submit"
+          disabled={formik.isSubmitting}
+          onClick={formik.handleSubmit}
+        >
+          {formik.isSubmitting ? (
+            <Spinner animation="border" size="sm" />
+          ) : (
+            "Отправить"
+          )}
+        </Button>
       </Modal.Footer>
     </Modal>
   );

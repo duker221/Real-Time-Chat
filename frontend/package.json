@@ -2,34 +2,14 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "@reduxjs/toolkit": "^2.2.5",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.7.2",
-    "bootstrap": "^5.3.3",
-    "classnames": "^2.5.1",
-    "formik": "^2.4.6",
-    "react": "^18.3.1",
-    "react-bootstrap": "^2.10.4",
-    "react-dom": "^18.3.1",
-    "react-redux": "^9.1.2",
-    "react-router-dom": "^6.23.1",
-    "react-scripts": "^3.0.1",
-    "redux": "^5.0.1",
-    "socket.io-client": "^4.7.5",
-    "web-vitals": "^2.1.4",
-    "yup": "^1.4.0"
-  },
   "proxy": "http://localhost:5001",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "analyze": "source-map-explorer 'public/*.js*'"
   },
-  "type": "module",
   "browserslist": {
     "production": [
       ">0.2%",
@@ -41,5 +21,42 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.2.1",
+    "@rollbar/react": "^0.12.0-beta",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.6.7",
+    "bootstrap": "^5.3.3",
+    "eslint": "^8.57.0",
+    "formik": "^2.4.5",
+    "i18next": "^23.12.1",
+    "leo-profanity": "^1.7.0",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.10.1",
+    "react-bootstrap-icons": "^1.11.3",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^14.1.3",
+    "react-redux": "^9.1.0",
+    "react-router-dom": "^6.22.2",
+    "react-scripts": "5.0.1",
+    "react-toastify": "^10.0.4",
+    "rollbar": "^2.26.4",
+    "socket.io-client": "^4.7.4",
+    "web-vitals": "^2.1.4",
+    "yup": "^1.3.3"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-functional": "^6.0.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "sass": "^1.71.1",
+    "source-map-explorer": "^2.5.3"
   }
 }

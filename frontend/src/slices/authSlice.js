@@ -20,7 +20,10 @@ export const regUser = createAsyncThunk(
   "auth/regUser",
   async ({ username, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post("api/v1/signup", { username, password });
+      const response = await axios.post("api/v1/signup", {
+        username,
+        password,
+      });
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", username);
 

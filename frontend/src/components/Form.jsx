@@ -1,14 +1,18 @@
 import React, { useState } from "react";
-import myImage from "../img/hello.jpg";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
+import myImage from "../img/hello.jpg";
 import { loginUser } from "../slices/authSlice";
+import "react-toastify/dist/ReactToastify.css";
+
 const Form = () => {
   const [loginError, setError] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const { t } = useTranslation();
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -27,7 +31,7 @@ const Form = () => {
           navigate("/");
         })
         .catch((e) => {
-          setError(true);
+          toast.error("Ошибка соединения");
         });
     },
   });
@@ -44,50 +48,47 @@ const Form = () => {
             onSubmit={formik.handleSubmit}
             className="col-12 col-md-6 mt-3 mt-mb-0"
           >
-            <h1 className="text-center mb-4">Войти</h1>
+            <h1 className="text-center mb-4">{t("loginPage.enter")}</h1>
             <div className="form-floating mb-3">
               <input
                 name="username"
                 autoComplete="username"
                 required
-                placeholder="Ваш ник"
+                placeholder={t("loginPage.nickname")}
                 id="username"
                 onChange={formik.handleChange}
                 value={formik.values.username}
                 className={`form-control ${loginError ? "is-invalid" : ""}`}
               />
-              <label htmlFor="username">Ваш ник</label>
+              <label htmlFor="username">{t("loginPage.nickname")}</label>
             </div>
             <div className="form-floating mb-4">
               <input
                 type="password"
                 name="password"
                 id="password"
-                placeholder="Пароль"
+                placeholder={t("loginPage.password")}
                 required
                 onChange={formik.handleChange}
                 value={formik.values.password}
                 className={`form-control ${loginError ? "is-invalid" : ""}`}
               />
-              <label htmlFor="password">Пароль</label>
-              {loginError ? (
-                <div className="invalid-tooltip">
-                  Неверные имя пользователя или пароль
-                </div>
-              ) : null}
+              <label htmlFor="password">{t("loginPage.password")}</label>
             </div>
             <button
               type="submit"
               className="w-100 mb-3 btn btn-outline-primary"
             >
-              Войти
+              {t("loginPage.enter")}
             </button>
           </form>
         </div>
 
         <div className="card-footer p-4">
           <div className="text-center">
-            <span>Нет аккаунта?</span> <a href="/signup">Регистрация</a>
+            <span>{t("loginPage.withoutAcc")}</span>
+            &nbsp;
+            <a href="/signup">{t("loginPage.reg")}</a>
           </div>
         </div>
       </div>

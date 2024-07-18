@@ -1,17 +1,23 @@
 import React, { useEffect, useState } from "react";
-import Navigation from "../Navigation";
 import { useSelector, useDispatch } from "react-redux";
+import io from "socket.io-client";
+import Dropdown from "react-bootstrap/Dropdown";
+import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
+import leoProfanity from "../../leoProfanityConfig";
+import Navigation from "../Navigation";
 import { fetchChannels, removeChannel } from "../../slices/channelsSlice";
 import {
   fetchMessages,
   addMessage,
   sendMessage,
 } from "../../slices/messageSlice";
-import io from "socket.io-client";
-import Dropdown from "react-bootstrap/Dropdown";
 import NewChannelModal from "../Modal/CreateNewChannel";
 import EditChannelModal from "../Modal/EditChannelName";
+
+import "react-toastify/dist/ReactToastify.css";
 import { QuitBtn } from "../Button/QuitBtn";
+
 const Chat = () => {
   const token = useSelector((state) => state.auth.token);
   const username = useSelector((state) => state.auth.user);
@@ -25,7 +31,12 @@ const Chat = () => {
   const channelNames = channels.map((channel) => channel.name);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingChannel, setEditingChannel] = useState(null);
-
+  const { t } = useTranslation();
+  const activeChannelMessage = channels[activeChannel]
+    ? messages.filter(
+      (message) => message.channelId === channels[activeChannel].id
+    )
+    : [];
   useEffect(() => {
     if (token) {
       dispatch(fetchChannels(token));
@@ -63,11 +74,12 @@ const Chat = () => {
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
     const messageBody = e.target.body.value;
-    if (messageBody && channels[activeChannel] && token) {
+    const cleanMessage = leoProfanity.clean(messageBody);
+    if (cleanMessage && channels[activeChannel] && token) {
       const message = {
-        body: messageBody,
+        body: cleanMessage,
         channelId: channels[activeChannel].id,
-        username: username,
+        username,
       };
       try {
         await dispatch(sendMessage({ message, token }));
@@ -89,6 +101,7 @@ const Chat = () => {
   const handleDeleteChannel = (id) => {
     dispatch(removeChannel({ id, token }));
     setActiveChannel(0);
+    toast.success("Канал удален!");
   };
 
   const startEditing = (channel) => {
@@ -108,7 +121,7 @@ const Chat = () => {
         <div className="row h-100 bg-white flex-md-row">
           <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
             <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
-              <b>Каналы</b>
+              <b>{t("mainPage.channels")}</b>
               <button
                 type="button"
                 className="p-0 text-primary btn btn-group-vertical"
@@ -121,8 +134,8 @@ const Chat = () => {
                   height="20"
                   fill="currentColor"
                 >
-                  <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"></path>
-                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                  <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
                 </svg>
                 <span className="visually-hidden">+</span>
               </button>
@@ -166,10 +179,10 @@ const Chat = () => {
                           <Dropdown.Item
                             onClick={() => handleDeleteChannel(channel.id)}
                           >
-                            Удалить
+                            {t("mainPage.deleteChannel")}
                           </Dropdown.Item>
                           <Dropdown.Item onClick={() => startEditing(channel)}>
-                            Переименовать
+                            {t("mainPage.renameChannel")}
                           </Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>
@@ -184,22 +197,32 @@ const Chat = () => {
               <div className="bg-light mb-4 p-3 shadow-sm small">
                 {channels[activeChannel] && (
                   <p className="m-0">
-                    <b># {channels[activeChannel].name}</b>
+                    <b>
+                      #
+                      {channels[activeChannel].name}
+                    </b>
                   </p>
                 )}
-                <span className="text-muted">{messageCount} сообщений</span>
+                <span className="text-muted">
+                  {t("mainPage.messagesCount.key", {
+                    count: activeChannelMessage.length,
+                  })}
+                </span>
               </div>
               <div
                 id="messages-box"
                 className="chat-messages overflow-auto px-5"
               >
-                {messages.map((message) =>
-                  message.channelId === channels[activeChannel]?.id ? (
-                    <div key={message.id}>
-                      <b>{message.username}:</b> {message.body}
-                    </div>
-                  ) : null
-                )}
+                {messages.map((message) => (message.channelId === channels[activeChannel]?.id ? (
+                  <div key={message.id}>
+                    <b>
+                      {message.username}
+                      :
+                    </b>
+                    {' '}
+                    {message.body}
+                  </div>
+                ) : null))}
               </div>
               <div className="mt-auto px-5 py-3">
                 <form
@@ -211,7 +234,7 @@ const Chat = () => {
                     <input
                       name="body"
                       aria-label="Новое сообщение"
-                      placeholder="Введите сообщение..."
+                      placeholder={t("mainPage.enterMessage")}
                       className="border-0 p-0 ps-2 form-control"
                     />
                     <button
@@ -229,9 +252,11 @@ const Chat = () => {
                         <path
                           fillRule="evenodd"
                           d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"
-                        ></path>
+                        />
                       </svg>
-                      <span className="visually-hidden">Отправить</span>
+                      <span className="visually-hidden">
+                        {t("mainPage.send")}
+                      </span>
                     </button>
                   </div>
                 </form>
@@ -239,7 +264,6 @@ const Chat = () => {
             </div>
           </div>
         </div>
-        <div className="Toastify"></div>
       </div>
 
       {isModalOpen && (

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Formik, Form, Field, useField } from "formik";
-import regImage from "../../img/reg.jpg";
+import {
+  Formik, Form, Field, useField
+} from "formik";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import regImage from "../../img/reg.jpg";
 import { regUser } from "../../slices/authSlice";
 import { loginSchema } from "../../validate";
-import { useNavigate } from "react-router-dom";
+
 const CustomErrorMessage = ({ name }) => {
   const [field, meta] = useField(name);
   return meta.touched && meta.error ? (
@@ -114,7 +117,7 @@ const RegistrationForm = () => {
               />
               <label htmlFor="password">Пароль</label>
               <CustomErrorMessage name="password" />
-              {usernameError && <div className="invalid-tooltip"></div>}
+              {usernameError && <div className="invalid-tooltip" />}
             </div>
             <div
               className={`form-floating mb-3 ${
@@ -136,7 +139,7 @@ const RegistrationForm = () => {
               />
               <label htmlFor="confirmPassword">Подтвердите пароль</label>
               <CustomErrorMessage name="confirmPassword" />
-              {usernameError && <div className="invalid-tooltip"></div>}
+              {usernameError && <div className="invalid-tooltip" />}
             </div>
             <button type="submit" className="w-100 btn btn-outline-primary">
               Зарегистрироваться
