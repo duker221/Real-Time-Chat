@@ -50,11 +50,11 @@ const EditChannelModal = ({
             <Form.Control
               type="text"
               name="name"
-              placeholder={t("modal.editChannel.newName")}
               value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               isInvalid={formik.touched.name && formik.errors.name}
+              id="name"
             />
             <Form.Control.Feedback type="invalid">
               {formik.errors.name}
