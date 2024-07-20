@@ -31,7 +31,11 @@ const Form = () => {
           navigate("/");
         })
         .catch((e) => {
-          toast.error("Ошибка соединения");
+          if (e.statusCode === 401) {
+            setError(true);
+          } else {
+            toast.error(t("toast.errorNetwork"));
+          }
         });
     },
   });
@@ -74,6 +78,11 @@ const Form = () => {
                 className={`form-control ${loginError ? "is-invalid" : ""}`}
               />
               <label htmlFor="password">{t("loginPage.password")}</label>
+              {loginError ? (
+                <div className="invalid-tooltip">
+                  Неверные имя пользователя или пароль
+                </div>
+              ) : null}
             </div>
             <button
               type="submit"

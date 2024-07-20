@@ -48,6 +48,9 @@ const ru = {
       youCanMove: "Но вы можете перейти",
       mainPage: "на главную страницу",
     },
+    toast: {
+      errorNetwork: "Ошибка соединения",
+    },
   },
 };
 
