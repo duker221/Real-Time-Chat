@@ -3,7 +3,9 @@ import {
   Formik, Form, Field, useField
 } from "formik";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+
 import regImage from "../../img/reg.jpg";
 import { regUser } from "../../slices/authSlice";
 import { loginSchema } from "../../validate";
@@ -20,20 +22,24 @@ const RegistrationForm = () => {
   const navigate = useNavigate();
   const { error } = useSelector((state) => state.auth);
   const [usernameError, setUsernameError] = useState(null);
-
+  const { t } = useTranslation();
   useEffect(() => {
-    if (error === "Такой пользователь уже существует") {
+    if (error === t("regForm.regError")) {
       setUsernameError(error);
       console.log(error);
     } else {
       setUsernameError(null);
     }
-  }, [error]);
+  }, [error, t]);
 
   return (
     <div className="card-body d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
       <div>
-        <img src={regImage} alt="Регистрация" className="rounded-circle" />
+        <img
+          src={regImage}
+          alt={t("loginPage.reg")}
+          className="rounded-circle"
+        />
       </div>
       <Formik
         initialValues={{ name: "", password: "", confirmPassword: "" }}
@@ -53,7 +59,7 @@ const RegistrationForm = () => {
               throw resultAction.payload;
             }
           } catch (regError) {
-            if (regError === "Такой пользователь уже существует") {
+            if (regError === t("regForm.regError")) {
               setErrors({ name: regError });
             }
             setSubmitting(false);
@@ -73,7 +79,7 @@ const RegistrationForm = () => {
       >
         {({ errors, touched }) => (
           <Form className="w-50">
-            <h1 className="text-center mb-4">Регистрация</h1>
+            <h1 className="text-center mb-4">{t("loginPage.reg")}</h1>
             <div
               className={`form-floating mb-3 ${
                 (errors.name && touched.name) || usernameError
@@ -82,7 +88,7 @@ const RegistrationForm = () => {
               }`}
             >
               <Field
-                placeholder="От 3 до 20 символов"
+                placeholder={t("regForm.charactersCount")}
                 name="name"
                 autoComplete="username"
                 id="name"
@@ -93,7 +99,7 @@ const RegistrationForm = () => {
                 }`}
               />
               <label htmlFor="name" className="form-label">
-                Имя пользователя
+                {t("regForm.userName")}
               </label>
               <CustomErrorMessage name="name" />
               {usernameError && (
@@ -106,7 +112,7 @@ const RegistrationForm = () => {
               }`}
             >
               <Field
-                placeholder="Не менее 6 символов"
+                placeholder={t("regForm.charasterCountPassword")}
                 name="password"
                 aria-describedby="passwordHelpBlock"
                 type="password"
@@ -115,7 +121,7 @@ const RegistrationForm = () => {
                   errors.password && touched.password ? "is-invalid" : ""
                 }`}
               />
-              <label htmlFor="password">Пароль</label>
+              <label htmlFor="password">{t("loginPage.password")}</label>
               <CustomErrorMessage name="password" />
               {usernameError && <div className="invalid-tooltip" />}
             </div>
@@ -127,7 +133,7 @@ const RegistrationForm = () => {
               }`}
             >
               <Field
-                placeholder="Подтвердите пароль"
+                placeholder={t("regForm.confirmPassword")}
                 name="confirmPassword"
                 type="password"
                 id="confirmPassword"
@@ -137,12 +143,14 @@ const RegistrationForm = () => {
                     : ""
                 }`}
               />
-              <label htmlFor="confirmPassword">Подтвердите пароль</label>
+              <label htmlFor="confirmPassword">
+                {t("regForm.confirmPassword")}
+              </label>
               <CustomErrorMessage name="confirmPassword" />
               {usernameError && <div className="invalid-tooltip" />}
             </div>
             <button type="submit" className="w-100 btn btn-outline-primary">
-              Зарегистрироваться
+              {t("regForm.register")}
             </button>
           </Form>
         )}

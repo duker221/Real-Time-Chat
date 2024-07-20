@@ -20,9 +20,33 @@ const ru = {
         key_few: "{{count}} сообщения",
         key_many: "{{count}} сообщений",
       },
-      modal: {
+      channelMenu: "Управление каналом",
+    },
+    modal: {
+      createChannel: {
         createNewChannel: "Создать новый канал",
+        send: "Отправить",
+        cancel: "Отменить",
+        addChannel: "Добавить канал",
       },
+      editChannel: {
+        renameChannelNotification: "Канал переименован!",
+        renameChannel: "Переименовать канал",
+        newName: "Введите новое имя",
+      },
+    },
+    regForm: {
+      regError: "Такой пользователь уже существует",
+      register: "Зарегистрироваться",
+      confirmPassword: "Подтвердите пароль",
+      charactersCount: "От 3 до 20 символов",
+      charasterCountPassword: "Не менее 6 символов",
+      userName: "Имя пользователя",
+    },
+    notFoundPage: {
+      notFound: "Страница не найдена",
+      youCanMove: "Но вы можете перейти",
+      mainPage: "на главную страницу",
     },
   },
 };

@@ -171,7 +171,7 @@ const Chat = () => {
                           }}
                         >
                           <span className="visually-hidden">
-                            Управление каналом
+                            {t("mainPage.channelMenu")}
                           </span>
                         </Dropdown.Toggle>
 

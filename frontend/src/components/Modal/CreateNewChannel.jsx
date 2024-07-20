@@ -5,6 +5,7 @@ import { Modal, Button, Spinner } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useTranslation } from "react-i18next";
 import leoProfanity from "../../leoProfanityConfig";
 import { schema } from "../../validate";
 import { createChannels, fetchChannels } from "../../slices/channelsSlice";
@@ -16,6 +17,7 @@ const NewChannelModal = ({
   token,
   lastChannel,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const channels = useSelector((state) => state.channels.channels);
   const formik = useFormik({
@@ -31,13 +33,13 @@ const NewChannelModal = ({
         const data = await dispatch(
           createChannels({ name: leoProfanity.clean(values.name), token })
         );
-        console.log("Канал успешно создан!", data);
+
         lastChannel(channels.length);
         dispatch(fetchChannels(token));
         onClose();
         toast.success("Канал создан!");
       } catch (error) {
-        console.error("Ошибка при создании канала:", error);
+        console.log(error);
       } finally {
         setSubmitting(false);
       }
@@ -64,7 +66,7 @@ const NewChannelModal = ({
   return ReactDOM.createPortal(
     <Modal show={isModalOpen} onHide={onClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Добавить канал</Modal.Title>
+        <Modal.Title>{t("modal.createChannel.addChannel")}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <form onSubmit={formik.handleSubmit}>
@@ -83,7 +85,7 @@ const NewChannelModal = ({
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onClose}>
-          Отменить
+          {t("modal.createChannel.cancel")}
         </Button>
         <Button
           variant="primary"
@@ -93,7 +95,7 @@ const NewChannelModal = ({
           {formik.isSubmitting ? (
             <Spinner animation="border" size="sm" />
           ) : (
-            "Отправить"
+            t("modal.createChannel.send")
           )}
         </Button>
       </Modal.Footer>

@@ -5,6 +5,7 @@ import {
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import { editChannel, fetchChannels } from "../../slices/channelsSlice";
 import { schema } from "../../validate";
 
@@ -13,7 +14,7 @@ const EditChannelModal = ({
 }) => {
   const dispatch = useDispatch();
   const channels = useSelector((state) => state.channels.channels);
-
+  const { t } = useTranslation();
   const formik = useFormik({
     initialValues: {
       name: channel ? channel.name : "",
@@ -27,10 +28,9 @@ const EditChannelModal = ({
         );
         dispatch(fetchChannels(token));
         onClose();
-        toast.success("Канал переименован!");
+        toast.success(t("modal.editChannel.renameChannelNotification"));
       } catch (error) {
-        console.error("Ошибка при переименовании канала:", error);
-        toast.error("");
+        console.log(error);
       } finally {
         setSubmitting(false);
       }
@@ -40,7 +40,7 @@ const EditChannelModal = ({
   return (
     <Modal show={isModalOpen} onHide={onClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Переименовать канал</Modal.Title>
+        <Modal.Title>{t("modal.editChannel.renameChannel")}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
@@ -48,7 +48,7 @@ const EditChannelModal = ({
             <Form.Control
               type="text"
               name="name"
-              placeholder="Введите новое имя"
+              placeholder={t("modal.editChannel.newName")}
               value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -66,7 +66,7 @@ const EditChannelModal = ({
           onClick={onClose}
           disabled={formik.isSubmitting}
         >
-          Отменить
+          {t("modal.createChannel.cancel")}
         </Button>
         <Button
           variant="primary"
@@ -77,7 +77,7 @@ const EditChannelModal = ({
           {formik.isSubmitting ? (
             <Spinner animation="border" size="sm" />
           ) : (
-            "Отправить"
+            t("modal.createChannel.send")
           )}
         </Button>
       </Modal.Footer>
