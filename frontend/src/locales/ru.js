@@ -28,6 +28,8 @@ const ru = {
         send: "Отправить",
         cancel: "Отменить",
         addChannel: "Добавить канал",
+        channelNameCount: "От 3 до 20 символов",
+        channelName: "Имя канала",
       },
       editChannel: {
         renameChannelNotification: "Канал переименован!",

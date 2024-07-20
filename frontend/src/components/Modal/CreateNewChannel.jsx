@@ -20,6 +20,7 @@ const NewChannelModal = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const channels = useSelector((state) => state.channels.channels);
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -30,16 +31,14 @@ const NewChannelModal = ({
       try {
         setSubmitting(true);
         const cleanedName = leoProfanity.clean(values.name);
-        const data = await dispatch(
-          createChannels({ name: values.name, token })
-        );
+        await dispatch(createChannels({ name: cleanedName, token }));
 
         lastChannel(channels.length);
         dispatch(fetchChannels(token));
         onClose();
-        toast.success("Канал создан!");
+        toast.success(t("modal.createChannel.channelCreated"));
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
         setSubmitting(false);
       }
@@ -81,7 +80,9 @@ const NewChannelModal = ({
             autoFocus="autofocus"
             id="name"
           />
-          <label htmlFor="name" className="visually-hidden">Имя канала</label>
+          <label htmlFor="name" className="visually-hidden">
+            {t("modal.createChannel.channelName")}
+          </label>
           <div className="invalid-feedback">{formik.errors.name}</div>
         </form>
       </Modal.Body>
