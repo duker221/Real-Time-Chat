@@ -72,13 +72,14 @@ const NewChannelModal = ({
         <form onSubmit={formik.handleSubmit}>
           <input
             name="name"
-            className={`form-control ${
+            className={`form-control mb-2 ${
               formik.errors.name && formik.touched.name ? "is-invalid" : ""
             }`}
             value={formik.values.name}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             autoFocus="autofocus"
+            id="name"
           />
           <div className="invalid-feedback">{formik.errors.name}</div>
         </form>
