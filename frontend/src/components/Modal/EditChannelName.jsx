@@ -51,7 +51,7 @@ const EditChannelModal = ({
             <Form.Control
               type="text"
               name="name"
-              value={formik.values.name}
+              value={leoProfanity.clean(formik.values.name) || ""}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               isInvalid={formik.touched.name && formik.errors.name}
