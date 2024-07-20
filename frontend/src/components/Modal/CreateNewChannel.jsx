@@ -81,6 +81,7 @@ const NewChannelModal = ({
             autoFocus="autofocus"
             id="name"
           />
+          <label htmlFor="name" className="visually-hidden">Имя канала</label>
           <div className="invalid-feedback">{formik.errors.name}</div>
         </form>
       </Modal.Body>
