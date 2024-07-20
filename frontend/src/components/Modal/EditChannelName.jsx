@@ -32,7 +32,8 @@ const EditChannelModal = ({
         onClose();
         toast.success(t("modal.editChannel.renameChannelNotification"));
       } catch (error) {
-        console.log(error);
+        console.error("Error updating channel:", error);
+        toast.error(t("modal.editChannel.errorNotification"));
       } finally {
         setSubmitting(false);
       }
