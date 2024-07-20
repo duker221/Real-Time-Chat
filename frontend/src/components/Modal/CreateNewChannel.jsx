@@ -31,7 +31,7 @@ const NewChannelModal = ({
         setSubmitting(true);
         const cleanedName = leoProfanity.clean(values.name);
         const data = await dispatch(
-          createChannels({ name: cleanedName, token })
+          createChannels({ name: values.name, token })
         );
 
         lastChannel(channels.length);

@@ -155,7 +155,7 @@ const Chat = () => {
                       onClick={() => setActiveChannel(index)}
                     >
                       <span className="me-1">#</span>
-                      {channel.name}
+                      {leoProfanity.clean(channel.name)}
                     </button>
 
                     {channel.removable && (
