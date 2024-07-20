@@ -29,9 +29,9 @@ const NewChannelModal = ({
     onSubmit: async (values, { setSubmitting }) => {
       try {
         setSubmitting(true);
-
+        const cleanedName = leoProfanity.clean(values.name);
         const data = await dispatch(
-          createChannels({ name: leoProfanity.clean(values.name), token })
+          createChannels({ name: cleanedName, token })
         );
 
         lastChannel(channels.length);
