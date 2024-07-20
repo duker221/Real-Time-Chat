@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { editChannel, fetchChannels } from "../../slices/channelsSlice";
 import { schema } from "../../validate";
+import leoProfanity from "../../leoProfanityConfig";
 
 const EditChannelModal = ({
   onClose, isModalOpen, channel, token
@@ -23,8 +24,9 @@ const EditChannelModal = ({
     onSubmit: async (values, { setSubmitting }) => {
       try {
         setSubmitting(true);
+        const cleanedName = leoProfanity.clean(values.name);
         await dispatch(
-          editChannel({ id: channel.id, token, newName: values.name })
+          editChannel({ id: channel.id, token, newName: cleanedName })
         );
         dispatch(fetchChannels(token));
         onClose();
