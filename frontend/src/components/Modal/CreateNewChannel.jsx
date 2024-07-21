@@ -104,11 +104,7 @@ const NewChannelModal = ({
               <Button variant="secondary" onClick={onClose} className="me-2">
                 {t("modal.createChannel.cancel")}
               </Button>
-              <Button
-                variant="primary"
-                onClick={formik.handleSubmit}
-                disabled={!formik.isValid || formik.isSubmitting}
-              >
+              <Button variant="primary" onClick={formik.handleSubmit}>
                 {formik.isSubmitting ? (
                   <Spinner animation="border" size="sm" />
                 ) : (
