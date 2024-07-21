@@ -22,7 +22,7 @@ const RemoveChannel = ({
       onChannelDeleted();
       toast.success(t("modal.deleteChannel.sucess"));
     } catch (error) {
-      console.error("Ошибка при удалении канала:", error);
+      console.error("Ошибка при удалении канала", error);
     } finally {
       onHide();
     }
