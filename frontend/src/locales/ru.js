@@ -37,6 +37,12 @@ const ru = {
         renameChannel: "Переименовать канал",
         newName: "Введите новое имя",
       },
+      deleteChannel: {
+        deleteChannel: "Удалить канал",
+        sure: "Уверены?",
+        delete: "Удалить",
+        sucess: "Канал удален",
+      },
     },
     regForm: {
       regError: "Такой пользователь уже существует",

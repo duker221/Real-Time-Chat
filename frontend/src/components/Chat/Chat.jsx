@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import leoProfanity from "../../leoProfanityConfig";
 import Navigation from "../Navigation";
+import "react-toastify/dist/ReactToastify.css";
 import { fetchChannels, removeChannel } from "../../slices/channelsSlice";
 import {
   fetchMessages,
@@ -14,8 +15,8 @@ import {
 } from "../../slices/messageSlice";
 import NewChannelModal from "../Modal/CreateNewChannel";
 import EditChannelModal from "../Modal/EditChannelName";
+import RemoveChannel from "../Modal/RemoveChannel";
 
-import "react-toastify/dist/ReactToastify.css";
 import { QuitBtn } from "../Button/QuitBtn";
 
 const Chat = () => {
@@ -31,12 +32,15 @@ const Chat = () => {
   const channelNames = channels.map((channel) => channel.name);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingChannel, setEditingChannel] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [channelToDelete, setChannelToDelete] = useState(null);
   const { t } = useTranslation();
   const activeChannelMessage = channels[activeChannel]
     ? messages.filter(
       (message) => message.channelId === channels[activeChannel].id
     )
     : [];
+
   useEffect(() => {
     if (token) {
       dispatch(fetchChannels(token));
@@ -98,10 +102,14 @@ const Chat = () => {
     setIsModalOpen(false);
   };
 
-  const handleDeleteChannel = (id) => {
-    dispatch(removeChannel({ id, token }));
-    setActiveChannel(0);
-    toast.success("Канал удален!");
+  const handleOpenDeleteModal = (channelId) => {
+    setChannelToDelete(channelId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setChannelToDelete(null);
   };
 
   const startEditing = (channel) => {
@@ -177,7 +185,7 @@ const Chat = () => {
 
                         <Dropdown.Menu>
                           <Dropdown.Item
-                            onClick={() => handleDeleteChannel(channel.id)}
+                            onClick={() => handleOpenDeleteModal(channel.id)}
                           >
                             {t("mainPage.deleteChannel")}
                           </Dropdown.Item>
@@ -282,6 +290,16 @@ const Chat = () => {
           isModalOpen={isEditModalOpen}
           channel={editingChannel}
           token={token}
+        />
+      )}
+
+      {isDeleteModalOpen && (
+        <RemoveChannel
+          show={isDeleteModalOpen}
+          onHide={handleCloseDeleteModal}
+          channelId={channelToDelete}
+          token={token}
+          onChannelDeleted={() => setActiveChannel(0)}
         />
       )}
     </>
