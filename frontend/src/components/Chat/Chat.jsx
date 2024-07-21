@@ -37,8 +37,8 @@ const Chat = () => {
   const { t } = useTranslation();
   const activeChannelMessage = channels[activeChannel]
     ? messages.filter(
-        (message) => message.channelId === channels[activeChannel].id
-      )
+      (message) => message.channelId === channels[activeChannel].id
+    )
     : [];
 
   useEffect(() => {
@@ -205,7 +205,10 @@ const Chat = () => {
               <div className="bg-light mb-4 p-3 shadow-sm small">
                 {channels[activeChannel] && (
                   <p className="m-0">
-                    <b>#{channels[activeChannel].name}</b>
+                    <b>
+                      #
+                      {channels[activeChannel].name}
+                    </b>
                   </p>
                 )}
                 <span className="text-muted">
@@ -218,14 +221,14 @@ const Chat = () => {
                 id="messages-box"
                 className="chat-messages overflow-auto px-5"
               >
-                {messages.map((message) =>
-                  message.channelId === channels[activeChannel]?.id ? (
-                    <div key={message.id} className="text-break mb-2">
-                      <b>{message.username}</b>
-                      {": "} {message.body}
-                    </div>
-                  ) : null
-                )}
+                {messages.map((message) => (message.channelId === channels[activeChannel]?.id ? (
+                  <div key={message.id} className="text-break mb-2">
+                    <b>{message.username}</b>
+                    {": "} 
+                    {' '}
+                    {message.body}
+                  </div>
+                ) : null))}
               </div>
               <div className="mt-auto px-5 py-3">
                 <form
