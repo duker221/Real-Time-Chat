@@ -1,7 +1,5 @@
 import React from "react";
-import {
-  Modal, Button, Spinner, Form
-} from "react-bootstrap";
+import { Modal, Button, Spinner, Form } from "react-bootstrap";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -10,19 +8,18 @@ import * as yup from "yup";
 import { editChannel, fetchChannels } from "../../slices/channelsSlice";
 import leoProfanity from "../../leoProfanityConfig";
 
-const EditChannelModal = ({
-  onClose, isModalOpen, channel, token
-}) => {
+const EditChannelModal = ({ onClose, isModalOpen, channel, token }) => {
   const { t } = useTranslation();
-  const createValidationSchema = (channels) => yup.object().shape({
-    name: yup
-      .string()
-      .trim()
-      .required(t("validation.required"))
-      .min(3, t("regForm.charactersCount"))
-      .max(20, t("regForm.charactersCount"))
-      .notOneOf(channels, t("validation.uniqName")),
-  });
+  const createValidationSchema = (channels) =>
+    yup.object().shape({
+      name: yup
+        .string()
+        .trim()
+        .required(t("validation.required"))
+        .min(3, t("regForm.charactersCount"))
+        .max(20, t("regForm.charactersCount"))
+        .notOneOf(channels, t("validation.uniqName")),
+    });
   const dispatch = useDispatch();
   const channels = useSelector((state) => state.channels.channels);
 
@@ -70,7 +67,7 @@ const EditChannelModal = ({
               id="name"
               className="mb-2"
             />
-            <Form.Label className="visually-hidden">
+            <Form.Label className="visually-hidden" htmlFor="name">
               {t("modal.createChannel.channelName")}
             </Form.Label>
             <Form.Control.Feedback type="invalid">
