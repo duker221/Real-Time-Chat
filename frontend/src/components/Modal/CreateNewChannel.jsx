@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import { useFormik } from "formik";
-import { Modal, Button, Spinner } from "react-bootstrap";
+import {
+  Modal, Button, Spinner, Form
+} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -78,40 +80,45 @@ const NewChannelModal = ({
         <Modal.Title>{t("modal.createChannel.addChannel")}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <form onSubmit={formik.handleSubmit}>
-          <input
-            name="name"
-            className={`form-control mb-2 ${
-              formik.errors.name && formik.touched.name ? "is-invalid" : ""
-            }`}
-            value={formik.values.name}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            autoFocus="autofocus"
-            id="name"
-          />
-          <label htmlFor="name" className="visually-hidden">
-            {t("modal.createChannel.channelName")}
-          </label>
-          <div className="invalid-feedback">{formik.errors.name}</div>
-        </form>
+        <Form onSubmit={formik.handleSubmit}>
+          <Form.Group>
+            <Form.Control
+              name="name"
+              className={`form-control mb-2 ${
+                formik.errors.name && formik.touched.name ? "is-invalid" : ""
+              }`}
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              autoFocus="autofocus"
+              id="name"
+            />
+            <Form.Label htmlFor="name" className="visually-hidden">
+              {t("modal.createChannel.channelName")}
+            </Form.Label>
+            <Form.Control.Feedback className="invalid-feedback">
+              {formik.errors.name}
+            </Form.Control.Feedback>
+
+            <div className="d-flex justify-content-end">
+              <Button variant="secondary" onClick={onClose} className="me-2">
+                {t("modal.createChannel.cancel")}
+              </Button>
+              <Button
+                variant="primary"
+                onClick={formik.handleSubmit}
+                disabled={!formik.isValid || formik.isSubmitting}
+              >
+                {formik.isSubmitting ? (
+                  <Spinner animation="border" size="sm" />
+                ) : (
+                  t("modal.createChannel.send")
+                )}
+              </Button>
+            </div>
+          </Form.Group>
+        </Form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>
-          {t("modal.createChannel.cancel")}
-        </Button>
-        <Button
-          variant="primary"
-          onClick={formik.handleSubmit}
-          disabled={!formik.isValid || formik.isSubmitting}
-        >
-          {formik.isSubmitting ? (
-            <Spinner animation="border" size="sm" />
-          ) : (
-            t("modal.createChannel.send")
-          )}
-        </Button>
-      </Modal.Footer>
     </Modal>,
     document.body
   );
