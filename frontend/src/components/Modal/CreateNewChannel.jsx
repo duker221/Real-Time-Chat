@@ -96,11 +96,12 @@ const NewChannelModal = ({
             <Form.Label htmlFor="name" className="visually-hidden">
               {t("modal.createChannel.channelName")}
             </Form.Label>
-            <Form.Control.Feedback className="invalid-feedback">
-              {formik.errors.name}
-            </Form.Control.Feedback>
-
-            <div className="d-flex justify-content-end">
+            {formik.errors.name && formik.touched.name && (
+              <Form.Control.Feedback type="invalid">
+                {formik.errors.name}
+              </Form.Control.Feedback>
+            )}
+            <div className="d-flex justify-content-end mt-2">
               <Button variant="secondary" onClick={onClose} className="me-2">
                 {t("modal.createChannel.cancel")}
               </Button>
