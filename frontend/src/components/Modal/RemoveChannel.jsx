@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { Modal, Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import { removeChannel } from "../../slices/channelsSlice";
 
 const RemoveChannel = ({
@@ -12,34 +13,34 @@ const RemoveChannel = ({
   token,
   onChannelDeleted,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const handleDelete = async () => {
     try {
       await dispatch(removeChannel({ id: channelId, token }));
-      onChannelDeleted(); // Обновляем состояние после удаления
-      toast.success("Канал удален!");
+      onChannelDeleted();
+      toast.success(t("modal.deleteChannel.sucess"));
     } catch (error) {
-      toast.error("Ошибка при удалении канала!");
       console.error("Ошибка при удалении канала:", error);
     } finally {
-      onHide(); // Закрываем модальное окно
+      onHide();
     }
   };
 
   return ReactDOM.createPortal(
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Удалить канал</Modal.Title>
+        <Modal.Title>{t("modal.deleteChannel.deleteChannel")}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p className="lead">Уверены?</p>
+        <p className="lead">{t("modal.deleteChannel.sure")}</p>
         <div className="d-flex justify-content-end">
           <Button variant="secondary" onClick={onHide} className="me-2">
-            Отменить
+            {t("modal.createChannel.cancel")}
           </Button>
           <Button variant="danger" onClick={handleDelete}>
-            Удалить
+            {t("modal.deleteChannel.delete")}
           </Button>
         </div>
       </Modal.Body>
