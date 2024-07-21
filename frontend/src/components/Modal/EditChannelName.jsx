@@ -6,21 +6,33 @@ import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import * as yup from "yup";
 import { editChannel, fetchChannels } from "../../slices/channelsSlice";
-import { schema } from "../../validate";
 import leoProfanity from "../../leoProfanityConfig";
 
 const EditChannelModal = ({
   onClose, isModalOpen, channel, token
 }) => {
+  const { t } = useTranslation();
+  const createValidationSchema = (channels) => yup.object().shape({
+    name: yup
+      .string()
+      .trim()
+      .required(t("validation.required"))
+      .min(3, t("regForm.charactersCount"))
+      .max(20, t("validation.maxCount"))
+      .notOneOf(channels, t("validation.uniqName")),
+  });
   const dispatch = useDispatch();
   const channels = useSelector((state) => state.channels.channels);
-  const { t } = useTranslation();
+
   const formik = useFormik({
     initialValues: {
       name: channel ? channel.name : "",
     },
-    validationSchema: schema(channels.map((channel) => channel.name)),
+    validationSchema: createValidationSchema(
+      channels.map((channel) => channel.name)
+    ),
     onSubmit: async (values, { setSubmitting }) => {
       try {
         setSubmitting(true);

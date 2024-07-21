@@ -5,10 +5,9 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-
+import * as yup from "yup";
 import regImage from "../../img/reg.jpg";
 import { regUser } from "../../slices/authSlice";
-import { loginSchema } from "../../validate";
 
 const CustomErrorMessage = ({ name }) => {
   const [field, meta] = useField(name);
@@ -31,6 +30,22 @@ const RegistrationForm = () => {
       setUsernameError(null);
     }
   }, [error, t]);
+  const loginSchema = yup.object().shape({
+    name: yup
+      .string()
+      .trim()
+      .required(t("validation.required"))
+      .min(3, t("regForm.charactersCount"))
+      .max(20, t("validation.maxCount")),
+    password: yup
+      .string()
+      .required(t("validation.required"))
+      .min(6, t("validation.minCountPass")),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref("password"), null], t("validation.matchPass"))
+      .required(t("validation.matchPass")),
+  });
 
   return (
     <div className="card-body d-flex flex-column flex-md-row justify-content-around align-items-center p-5">

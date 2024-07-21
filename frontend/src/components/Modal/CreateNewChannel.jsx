@@ -5,9 +5,10 @@ import { Modal, Button, Spinner } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import * as yup from "yup";
 import { useTranslation } from "react-i18next";
 import leoProfanity from "../../leoProfanityConfig";
-import { schema } from "../../validate";
+
 import { createChannels, fetchChannels } from "../../slices/channelsSlice";
 
 const NewChannelModal = ({
@@ -18,14 +19,23 @@ const NewChannelModal = ({
   lastChannel,
 }) => {
   const { t } = useTranslation();
+
   const dispatch = useDispatch();
   const channels = useSelector((state) => state.channels.channels);
-
+  const validationSchema = (channels) => yup.object().shape({
+    name: yup
+      .string()
+      .trim()
+      .required(t("validation.required"))
+      .min(3, t("regForm.charactersCount"))
+      .max(20, t("validation.maxCount"))
+      .notOneOf(channels, t("validation.uniqName")),
+  });
   const formik = useFormik({
     initialValues: {
       name: "",
     },
-    validationSchema: schema(channelNames),
+    validationSchema: validationSchema(channels.map((channel) => channel.name)),
     validateOnBlur: true,
     onSubmit: async (values, { setSubmitting }) => {
       try {
