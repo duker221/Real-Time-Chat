@@ -41,7 +41,7 @@ const ru = {
         deleteChannel: "Удалить канал",
         sure: "Уверены?",
         delete: "Удалить",
-        sucess: "Канал удален",
+        sucess: "Канал удалён",
       },
     },
     regForm: {
