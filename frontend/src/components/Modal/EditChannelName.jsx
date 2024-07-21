@@ -20,7 +20,7 @@ const EditChannelModal = ({
       .trim()
       .required(t("validation.required"))
       .min(3, t("regForm.charactersCount"))
-      .max(20, t("validation.maxCount"))
+      .max(20, t("regForm.charactersCount"))
       .notOneOf(channels, t("validation.uniqName")),
   });
   const dispatch = useDispatch();
