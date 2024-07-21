@@ -68,34 +68,40 @@ const EditChannelModal = ({
               onBlur={formik.handleBlur}
               isInvalid={formik.touched.name && formik.errors.name}
               id="name"
+              className="mb-2"
             />
+            <Form.Label className="visually-hidden">
+              {t("modal.createChannel.channelName")}
+            </Form.Label>
             <Form.Control.Feedback type="invalid">
               {formik.errors.name}
             </Form.Control.Feedback>
+
+            <div className="d-flex justify-content-end">
+              <Button
+                variant="secondary"
+                onClick={onClose}
+                disabled={formik.isSubmitting}
+                className="me-2"
+              >
+                {t("modal.createChannel.cancel")}
+              </Button>
+              <Button
+                variant="primary"
+                type="submit"
+                disabled={formik.isSubmitting}
+                onClick={formik.handleSubmit}
+              >
+                {formik.isSubmitting ? (
+                  <Spinner animation="border" size="sm" />
+                ) : (
+                  t("modal.createChannel.send")
+                )}
+              </Button>
+            </div>
           </Form.Group>
         </Form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button
-          variant="secondary"
-          onClick={onClose}
-          disabled={formik.isSubmitting}
-        >
-          {t("modal.createChannel.cancel")}
-        </Button>
-        <Button
-          variant="primary"
-          type="submit"
-          disabled={formik.isSubmitting}
-          onClick={formik.handleSubmit}
-        >
-          {formik.isSubmitting ? (
-            <Spinner animation="border" size="sm" />
-          ) : (
-            t("modal.createChannel.send")
-          )}
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 };
