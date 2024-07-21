@@ -32,7 +32,8 @@ rules:
   functional/no-throw-statement: 0
   functional/no-return-void: 0
   no-underscore-dangle: [2, { "allow": ["__filename", "__dirname"] }]
-  react/function-component-definition: [2, { "namedComponents": "arrow-function" }]
+  react/function-component-definition:
+    [2, { "namedComponents": "arrow-function" }]
   testing-library/no-debug: 0
   react/jsx-filename-extension: [1, { "extensions": [".js", ".jsx"] }]
   import/prefer-default-export: 0
@@ -46,3 +47,4 @@ rules:
   comma-dangle: 0
   eol-last: 0
   no-multiple-empty-lines: ["error", { "max": 1, "maxEOF": 0 }]
+  no-trailing-spaces: off

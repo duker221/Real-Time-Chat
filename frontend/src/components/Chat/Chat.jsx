@@ -224,8 +224,8 @@ const Chat = () => {
                 {messages.map((message) => (message.channelId === channels[activeChannel]?.id ? (
                   <div key={message.id} className="text-break mb-2">
                     <b>{message.username}</b>
-                    :
-                    {"\u00A0"}
+                    {": "} 
+                    {' '}
                     {message.body}
                   </div>
                 ) : null))}
