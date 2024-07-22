@@ -157,7 +157,7 @@ const Chat = () => {
                   <div className="d-flex justify-content-between align-items-center">
                     <button
                       type="button"
-                      className={`w-100 rounded-0 text-start btn text-truncate ${
+                      className={`w-100 rounded-0 text-start text-truncate btn ${
                         index === activeChannel ? "btn-secondary" : null
                       }`}
                       onClick={() => setActiveChannel(index)}
