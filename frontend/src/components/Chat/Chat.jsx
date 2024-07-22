@@ -158,7 +158,7 @@ const Chat = () => {
                     <button
                       type="button"
                       className={`w-100 rounded-0 text-start text-truncate btn ${
-                        index === activeChannel ? "btn-secondary" : null
+                        index === activeChannel ? "btn-secondary" : ''
                       }`}
                       onClick={() => setActiveChannel(index)}
                     >
