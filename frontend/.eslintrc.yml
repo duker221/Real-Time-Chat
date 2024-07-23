@@ -1,6 +1,6 @@
 env:
   browser: true
-  es2024: true
+  es2021: true
 
 extends:
   - airbnb
@@ -28,23 +28,10 @@ rules:
   functional/no-expression-statements: 0
   functional/immutable-data: 0
   functional/functional-parameters: 0
-  functional/no-try-statement: 0
-  functional/no-throw-statement: 0
+  functional/no-try-statements: 0
+  functional/no-throw-statements: 0
   functional/no-return-void: 0
   no-underscore-dangle: [2, { "allow": ["__filename", "__dirname"] }]
-  react/function-component-definition:
-    [2, { "namedComponents": "arrow-function" }]
+  react/function-component-definition: [2, { "namedComponents": "arrow-function" }]
   testing-library/no-debug: 0
   react/jsx-filename-extension: [1, { "extensions": [".js", ".jsx"] }]
-  import/prefer-default-export: 0
-  no-unused-vars: 0
-  consistent-return: 0
-  jsx-a11y/label-has-associated-control: 0
-  jsx-a11y/no-autofocus: 0
-  no-shadow: 0
-  no-param-reassign: [2, { "props": false }]
-  quotes: 0
-  comma-dangle: 0
-  eol-last: 0
-  no-multiple-empty-lines: ["error", { "max": 1, "maxEOF": 0 }]
-  no-trailing-spaces: off
