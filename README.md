@@ -4,7 +4,7 @@
 
 # HEXLET CHAT
 
-### [Deployed on Render](https://frontend-project-11-nine-beige.vercel.app/)
+### [Deployed on Render](https://chat-du6i.onrender.com/)
 
 ## Description
 
