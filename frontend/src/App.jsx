@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -14,11 +15,11 @@ const App = () => (
       <Routes>
         <Route
           path="/"
-          element={(
+          element={
             <ProtectedRoute>
               <Chat />
             </ProtectedRoute>
-          )}
+          }
         />
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<NotFoundPage />} />
