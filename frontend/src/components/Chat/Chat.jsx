@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import io from "socket.io-client";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import leoProfanity from "../../leoProfanityConfig";
 import Navigation from "../Navigation";
 import "react-toastify/dist/ReactToastify.css";
-import { fetchChannels, removeChannel } from "../../slices/channelsSlice";
+import { fetchChannels, removeChannel, addChannel } from "../../slices/channelsSlice";
 import {
   fetchMessages,
   addMessage,
@@ -37,8 +37,8 @@ const Chat = () => {
   const { t } = useTranslation();
   const activeChannelMessage = channels[activeChannel]
     ? messages.filter(
-        (message) => message.channelId === channels[activeChannel].id
-      )
+      (message) => message.channelId === channels[activeChannel].id
+    )
     : [];
 
   useEffect(() => {
@@ -54,26 +54,28 @@ const Chat = () => {
     }
   }, [messages]);
 
-  useEffect(() => {
-    const newSocket = io();
+  const setupSocket = useCallback(() => {
+    const newSocket = io("localhost:3000");
     setSocket(newSocket);
+
+    newSocket.on("newMessage", (newMessage) => {
+      if (newMessage.username !== username) {
+        dispatch(addMessage(newMessage));
+      }
+    });
+
+    newSocket.on("newChannel", (newChannel) => {
+      dispatch(addChannel(newChannel));
+    });
+
     return () => {
       newSocket.disconnect();
     };
-  }, []);
+  }, [dispatch, username]);
 
   useEffect(() => {
-    if (socket) {
-      socket.on("newMessage", (newMessage) => {
-        if (newMessage.username !== username) {
-          dispatch(addMessage(newMessage));
-        }
-      });
-      return () => {
-        socket.off("newMessage");
-      };
-    }
-  }, [socket, dispatch, username]);
+    setupSocket();
+  }, [setupSocket]);
 
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
@@ -205,7 +207,10 @@ const Chat = () => {
               <div className="bg-light mb-4 p-3 shadow-sm small">
                 {channels[activeChannel] && (
                   <p className="m-0">
-                    <b>#{channels[activeChannel].name}</b>
+                    <b>
+                      #
+                      {channels[activeChannel].name}
+                    </b>
                   </p>
                 )}
                 <span className="text-muted">
@@ -218,14 +223,14 @@ const Chat = () => {
                 id="messages-box"
                 className="chat-messages overflow-auto px-5"
               >
-                {messages.map((message) =>
-                  message.channelId === channels[activeChannel]?.id ? (
-                    <div key={message.id} className="text-break mb-2">
-                      <b>{message.username}</b>
-                      {": "} {message.body}
-                    </div>
-                  ) : null
-                )}
+                {messages.map((message) => (message.channelId === channels[activeChannel]?.id ? (
+                  <div key={message.id} className="text-break mb-2">
+                    <b>{message.username}</b>
+                    {": "} 
+                    {' '}
+                    {message.body}
+                  </div>
+                ) : null))}
               </div>
               <div className="mt-auto px-5 py-3">
                 <form
