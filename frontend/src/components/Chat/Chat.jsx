@@ -55,7 +55,7 @@ const Chat = () => {
   }, [messages]);
 
   useEffect(() => {
-    const newSocket = io();
+    const newSocket = io("localhost:3000");
     setSocket(newSocket);
     return () => {
       newSocket.disconnect();
@@ -153,8 +153,8 @@ const Chat = () => {
               id="channels-box"
             >
               {channels.map((channel, index) => (
-                <li key={channel.id} className="nav-item w-100">
-                  <div className="d-flex justify-content-between align-items-center">
+                <li className="nav-item w-100" key={channel.id}>
+                  <div role="group" className="d-flex dropdown btn-group">
                     <button
                       type="button"
                       className={`w-100 rounded-0 text-start text-truncate btn ${
