@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
@@ -110,7 +111,9 @@ const channelSlice = createSlice({
       .addCase(editChannel.fulfilled, (state, action) => {
         state.loading = false;
         const { id, newName } = action.payload;
-        const channel = state.channels.find((newChannel) => newChannel.id === id);
+        const channel = state.channels.find(
+          (newChannel) => newChannel.id === id,
+        );
         if (channel) {
           channel.name = newName;
         }
