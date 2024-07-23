@@ -55,7 +55,7 @@ const Chat = () => {
   }, [messages]);
 
   const setupSocket = useCallback(() => {
-    const newSocket = io("localhost:3000");
+    const newSocket = io();
     setSocket(newSocket);
 
     newSocket.on("newMessage", (newMessage) => {
