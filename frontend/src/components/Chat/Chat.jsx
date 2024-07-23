@@ -55,7 +55,7 @@ const Chat = () => {
   }, [messages]);
 
   useEffect(() => {
-    const newSocket = io("localhost:3000");
+    const newSocket = io();
     setSocket(newSocket);
     return () => {
       newSocket.disconnect();
