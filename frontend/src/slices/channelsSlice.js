@@ -1,11 +1,11 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 
 export const fetchChannels = createAsyncThunk(
-  "channels/fetchChannels",
+  'channels/fetchChannels',
   async (token) => {
     try {
-      const response = await axios.get("/api/v1/channels", {
+      const response = await axios.get('/api/v1/channels', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -13,37 +13,37 @@ export const fetchChannels = createAsyncThunk(
       if (response.status >= 200 && response.status < 300) {
         return response.data;
       }
-      throw new Error("Server Error!");
+      throw new Error('Server Error!');
     } catch (error) {
       console.log(error);
       throw error;
     }
-  }
+  },
 );
 
 export const createChannels = createAsyncThunk(
-  "channels/createChannels",
+  'channels/createChannels',
   async ({ name, token }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "api/v1/channels",
+        'api/v1/channels',
         { name },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       return response.data;
     } catch (error) {
-      console.log("Ошибка при создании канала");
+      console.log('Ошибка при создании канала');
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 export const removeChannel = createAsyncThunk(
-  "channels/removeChannel",
+  'channels/removeChannel',
   async ({ id, token }) => {
     try {
       await axios.delete(`/api/v1/channels/${id}`, {
@@ -53,14 +53,14 @@ export const removeChannel = createAsyncThunk(
       });
       return { id };
     } catch (error) {
-      console.log("Не удалось удалить канал", error);
+      console.log('Не удалось удалить канал', error);
       throw error;
     }
-  }
+  },
 );
 
 export const editChannel = createAsyncThunk(
-  "channels/editChannel",
+  'channels/editChannel',
   async ({ id, token, newName }) => {
     try {
       const response = await axios.patch(
@@ -70,18 +70,18 @@ export const editChannel = createAsyncThunk(
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       return { id, newName: response.data.name };
     } catch (error) {
-      console.log("Не удалось переименовать канал");
+      console.log('Не удалось переименовать канал');
       throw error;
     }
-  }
+  },
 );
 
 const channelSlice = createSlice({
-  name: "channels",
+  name: 'channels',
   initialState: {
     channels: [],
     status: null,
@@ -95,28 +95,28 @@ const channelSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchChannels.pending, (state) => {
-        state.status = "loading";
+        state.status = 'loading';
       })
       .addCase(fetchChannels.fulfilled, (state, action) => {
-        state.status = "succeeded";
+        state.status = 'succeeded';
         state.channels = action.payload;
       })
       .addCase(removeChannel.fulfilled, (state, action) => {
         state.loading = false;
         state.channels = state.channels.filter(
-          (channel) => channel.id !== action.payload.id
+          (channel) => channel.id !== action.payload.id,
         );
       })
       .addCase(editChannel.fulfilled, (state, action) => {
         state.loading = false;
         const { id, newName } = action.payload;
-        const channel = state.channels.find((channel) => channel.id === id);
+        const channel = state.channels.find((newChannel) => newChannel.id === id);
         if (channel) {
           channel.name = newName;
         }
       })
       .addCase(fetchChannels.rejected, (state, action) => {
-        state.status = "failed";
+        state.status = 'failed';
         state.error = action.error.message;
       });
   },

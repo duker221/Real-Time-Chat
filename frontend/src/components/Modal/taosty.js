@@ -1,9 +1,9 @@
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const notyfy = (message) => {
   ToastContainer.success(message, {
-    position: "top-right",
+    position: 'top-right',
     autoClose: 5000,
     hideProgressBar: false,
     closeOnClick: true,
@@ -13,4 +13,4 @@ const notyfy = (message) => {
   });
 };
 
-export { notyfy };
+export default notyfy;

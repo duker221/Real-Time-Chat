@@ -1,23 +1,22 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import io from "socket.io-client";
-import Dropdown from "react-bootstrap/Dropdown";
-import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
-import leoProfanity from "../../leoProfanityConfig";
-import Navigation from "../Navigation";
-import "react-toastify/dist/ReactToastify.css";
-import { fetchChannels, removeChannel, addChannel } from "../../slices/channelsSlice";
+import React, { useEffect, useState, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import io from 'socket.io-client';
+import Dropdown from 'react-bootstrap/Dropdown';
+import { useTranslation } from 'react-i18next';
+import leoProfanity from '../../leoProfanityConfig';
+import Navigation from '../Navigation';
+import 'react-toastify/dist/ReactToastify.css';
+import { fetchChannels, addChannel } from '../../slices/channelsSlice';
 import {
   fetchMessages,
   addMessage,
   sendMessage,
-} from "../../slices/messageSlice";
-import NewChannelModal from "../Modal/CreateNewChannel";
-import EditChannelModal from "../Modal/EditChannelName";
-import RemoveChannel from "../Modal/RemoveChannel";
+} from '../../slices/messageSlice';
+import NewChannelModal from '../Modal/CreateNewChannel';
+import EditChannelModal from '../Modal/EditChannelName';
+import RemoveChannel from '../Modal/RemoveChannel';
 
-import { QuitBtn } from "../Button/QuitBtn";
+import QuitBtn from '../Button/QuitBtn';
 
 const Chat = () => {
   const token = useSelector((state) => state.auth.token);
@@ -26,8 +25,8 @@ const Chat = () => {
   const channels = useSelector((state) => state.channels.channels);
   const [activeChannel, setActiveChannel] = useState(0);
   const messages = useSelector((state) => state.message.messages);
-  const [messageCount, setMessageCount] = useState(0);
-  const [socket, setSocket] = useState(null);
+  const [messageCount, setMessageCount] = useState(0); // eslint-disable-line no-unused-vars
+  const [socket, setSocket] = useState(null); // eslint-disable-line no-unused-vars
   const [isModalOpen, setIsModalOpen] = useState(false);
   const channelNames = channels.map((channel) => channel.name);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -37,7 +36,7 @@ const Chat = () => {
   const { t } = useTranslation();
   const activeChannelMessage = channels[activeChannel]
     ? messages.filter(
-      (message) => message.channelId === channels[activeChannel].id
+      (message) => message.channelId === channels[activeChannel].id,
     )
     : [];
 
@@ -58,13 +57,13 @@ const Chat = () => {
     const newSocket = io();
     setSocket(newSocket);
 
-    newSocket.on("newMessage", (newMessage) => {
+    newSocket.on('newMessage', (newMessage) => {
       if (newMessage.username !== username) {
         dispatch(addMessage(newMessage));
       }
     });
 
-    newSocket.on("newChannel", (newChannel) => {
+    newSocket.on('newChannel', (newChannel) => {
       dispatch(addChannel(newChannel));
     });
 
@@ -89,9 +88,9 @@ const Chat = () => {
       };
       try {
         await dispatch(sendMessage({ message, token }));
-        e.target.body.value = "";
+        e.target.body.value = '';
       } catch (error) {
-        console.error("Ошибка при отправке сообщения:", error);
+        console.error('Ошибка при отправке сообщения:', error);
       }
     }
   };
@@ -131,7 +130,7 @@ const Chat = () => {
         <div className="row h-100 bg-white flex-md-row">
           <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
             <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
-              <b>{t("mainPage.channels")}</b>
+              <b>{t('mainPage.channels')}</b>
               <button
                 type="button"
                 className="p-0 text-primary btn btn-group-vertical"
@@ -160,7 +159,7 @@ const Chat = () => {
                     <button
                       type="button"
                       className={`w-100 rounded-0 text-start text-truncate btn ${
-                        index === activeChannel ? "btn-secondary" : ""
+                        index === activeChannel ? 'btn-secondary' : ''
                       }`}
                       onClick={() => setActiveChannel(index)}
                     >
@@ -172,16 +171,16 @@ const Chat = () => {
                       <Dropdown>
                         <Dropdown.Toggle
                           split
-                          variant={index === activeChannel ? "secondary" : null}
+                          variant={index === activeChannel ? 'secondary' : null}
                           className="flex-grow-0 dropdown-toggle dropdown-toggle-split btn"
                           id={`dropdownMenuButton-${channel.id}`}
                           style={{
-                            borderBottomLeftRadius: "0",
-                            borderTopLeftRadius: "0",
+                            borderBottomLeftRadius: '0',
+                            borderTopLeftRadius: '0',
                           }}
                         >
                           <span className="visually-hidden">
-                            {t("mainPage.channelMenu")}
+                            {t('mainPage.channelMenu')}
                           </span>
                         </Dropdown.Toggle>
 
@@ -189,10 +188,10 @@ const Chat = () => {
                           <Dropdown.Item
                             onClick={() => handleOpenDeleteModal(channel.id)}
                           >
-                            {t("mainPage.deleteChannel")}
+                            {t('mainPage.deleteChannel')}
                           </Dropdown.Item>
                           <Dropdown.Item onClick={() => startEditing(channel)}>
-                            {t("mainPage.renameChannel")}
+                            {t('mainPage.renameChannel')}
                           </Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>
@@ -214,7 +213,7 @@ const Chat = () => {
                   </p>
                 )}
                 <span className="text-muted">
-                  {t("mainPage.messagesCount.key", {
+                  {t('mainPage.messagesCount.key', {
                     count: activeChannelMessage.length,
                   })}
                 </span>
@@ -226,7 +225,7 @@ const Chat = () => {
                 {messages.map((message) => (message.channelId === channels[activeChannel]?.id ? (
                   <div key={message.id} className="text-break mb-2">
                     <b>{message.username}</b>
-                    {": "} 
+                    {': '}
                     {' '}
                     {message.body}
                   </div>
@@ -242,7 +241,7 @@ const Chat = () => {
                     <input
                       name="body"
                       aria-label="Новое сообщение"
-                      placeholder={t("mainPage.enterMessage")}
+                      placeholder={t('mainPage.enterMessage')}
                       className="border-0 p-0 ps-2 form-control"
                     />
                     <button
@@ -263,7 +262,7 @@ const Chat = () => {
                         />
                       </svg>
                       <span className="visually-hidden">
-                        {t("mainPage.send")}
+                        {t('mainPage.send')}
                       </span>
                     </button>
                   </div>

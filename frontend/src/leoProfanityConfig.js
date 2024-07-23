@@ -1,6 +1,6 @@
-import leoProfanity from "leo-profanity";
+import leoProfanity from 'leo-profanity';
 
-leoProfanity.loadDictionary("ru");
-leoProfanity.loadDictionary("en");
+leoProfanity.loadDictionary('ru');
+leoProfanity.loadDictionary('en');
 
 export default leoProfanity;

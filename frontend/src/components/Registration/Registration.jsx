@@ -2,7 +2,7 @@ import React from 'react';
 import Navigation from '../Navigation';
 import RegistrationForm from './RegForm';
 
-export const RegistrationPage = () => (
+const RegistrationPage = () => (
   <>
     <Navigation />
     <div className="container-fluid h-100">
@@ -16,3 +16,5 @@ export const RegistrationPage = () => (
     </div>
   </>
 );
+
+export default RegistrationPage;

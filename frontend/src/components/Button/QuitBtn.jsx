@@ -1,17 +1,19 @@
-import React from "react";
-import Button from "react-bootstrap/Button";
-import { useTranslation } from "react-i18next";
+import React from 'react';
+import Button from 'react-bootstrap/Button';
+import { useTranslation } from 'react-i18next';
 
-export const QuitBtn = () => {
+const QuitBtn = () => {
   const { t } = useTranslation();
   const handleClick = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     window.location.reload();
   };
 
   return (
     <Button type="submit" onClick={handleClick}>
-      {t("mainPage.quitBtn")}
+      {t('mainPage.quitBtn')}
     </Button>
   );
 };
+
+export default QuitBtn;

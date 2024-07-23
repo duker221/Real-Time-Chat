@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Form from "./Form";
-import Navigation from "./Navigation";
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Form from './Form';
+import Navigation from './Navigation';
 
 const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!localStorage.getItem("token")) {
-      navigate("/login");
+    if (!localStorage.getItem('token')) {
+      navigate('/login');
     }
   }, [navigate]);
   return (

@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
-  Formik, Form, Field, useField
-} from "formik";
-import { useDispatch, useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import * as yup from "yup";
-import regImage from "../../img/reg.jpg";
-import { regUser } from "../../slices/authSlice";
+  Formik, Form, Field, useField,
+} from 'formik';
+import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import * as yup from 'yup';
+import regImage from '../../img/reg.jpg';
+import { regUser } from '../../slices/authSlice';
 
 const CustomErrorMessage = ({ name }) => {
-  const [field, meta] = useField(name);
+  const [field, meta] = useField(name); // eslint-disable-line no-unused-vars
   return meta.touched && meta.error ? (
     <div className="invalid-tooltip">{meta.error}</div>
   ) : null;
@@ -23,7 +23,7 @@ const RegistrationForm = () => {
   const [usernameError, setUsernameError] = useState(null);
   const { t } = useTranslation();
   useEffect(() => {
-    if (error === t("regForm.regError")) {
+    if (error === t('regForm.regError')) {
       setUsernameError(error);
       console.log(error);
     } else {
@@ -34,17 +34,17 @@ const RegistrationForm = () => {
     name: yup
       .string()
       .trim()
-      .required(t("validation.required"))
-      .min(3, t("regForm.charactersCount"))
-      .max(20, t("validation.maxCount")),
+      .required(t('validation.required'))
+      .min(3, t('regForm.charactersCount'))
+      .max(20, t('validation.maxCount')),
     password: yup
       .string()
-      .required(t("validation.required"))
-      .min(6, t("validation.minCountPass")),
+      .required(t('validation.required'))
+      .min(6, t('validation.minCountPass')),
     confirmPassword: yup
       .string()
-      .oneOf([yup.ref("password"), null], t("validation.matchPass"))
-      .required(t("validation.matchPass")),
+      .oneOf([yup.ref('password'), null], t('validation.matchPass'))
+      .required(t('validation.matchPass')),
   });
 
   return (
@@ -52,12 +52,12 @@ const RegistrationForm = () => {
       <div>
         <img
           src={regImage}
-          alt={t("loginPage.reg")}
+          alt={t('loginPage.reg')}
           className="rounded-circle"
         />
       </div>
       <Formik
-        initialValues={{ name: "", password: "", confirmPassword: "" }}
+        initialValues={{ name: '', password: '', confirmPassword: '' }}
         validationSchema={loginSchema}
         onSubmit={async (values, { setSubmitting, setErrors }) => {
           try {
@@ -65,16 +65,16 @@ const RegistrationForm = () => {
               regUser({
                 username: values.name,
                 password: values.password,
-              })
+              }),
             );
 
             if (regUser.fulfilled.match(resultAction)) {
-              navigate("/");
+              navigate('/');
             } else {
               throw resultAction.payload;
             }
           } catch (regError) {
-            if (regError === t("regForm.regError")) {
+            if (regError === t('regForm.regError')) {
               setErrors({ name: regError });
             }
             setSubmitting(false);
@@ -85,7 +85,7 @@ const RegistrationForm = () => {
           try {
             loginSchema.validateSync(values, { abortEarly: false });
           } catch (err) {
-            err.inner.forEach((error) => {
+            err.inner.forEach((error) => { // eslint-disable-line no-shadow
               validationErrors[error.path] = error.message;
             });
           }
@@ -94,27 +94,27 @@ const RegistrationForm = () => {
       >
         {({ errors, touched }) => (
           <Form className="w-50">
-            <h1 className="text-center mb-4">{t("loginPage.reg")}</h1>
+            <h1 className="text-center mb-4">{t('loginPage.reg')}</h1>
             <div
               className={`form-floating mb-3 ${
                 (errors.name && touched.name) || usernameError
-                  ? "has-error"
-                  : ""
+                  ? 'has-error'
+                  : ''
               }`}
             >
               <Field
-                placeholder={t("regForm.charactersCount")}
+                placeholder={t('regForm.charactersCount')}
                 name="name"
                 autoComplete="username"
                 id="name"
                 className={`form-control ${
                   (errors.name && touched.name) || usernameError
-                    ? "is-invalid"
-                    : ""
+                    ? 'is-invalid'
+                    : ''
                 }`}
               />
               <label htmlFor="name" className="form-label">
-                {t("regForm.userName")}
+                {t('regForm.userName')}
               </label>
               <CustomErrorMessage name="name" />
               {usernameError && (
@@ -123,49 +123,49 @@ const RegistrationForm = () => {
             </div>
             <div
               className={`form-floating mb-3 ${
-                errors.password && touched.password ? "has-error" : ""
+                errors.password && touched.password ? 'has-error' : ''
               }`}
             >
               <Field
-                placeholder={t("regForm.charasterCountPassword")}
+                placeholder={t('regForm.charasterCountPassword')}
                 name="password"
                 aria-describedby="passwordHelpBlock"
                 type="password"
                 id="password"
                 className={`form-control ${
-                  errors.password && touched.password ? "is-invalid" : ""
+                  errors.password && touched.password ? 'is-invalid' : ''
                 }`}
               />
-              <label htmlFor="password">{t("loginPage.password")}</label>
+              <label htmlFor="password">{t('loginPage.password')}</label>
               <CustomErrorMessage name="password" />
               {usernameError && <div className="invalid-tooltip" />}
             </div>
             <div
               className={`form-floating mb-3 ${
                 errors.confirmPassword && touched.confirmPassword
-                  ? "has-error"
-                  : ""
+                  ? 'has-error'
+                  : ''
               }`}
             >
               <Field
-                placeholder={t("regForm.confirmPassword")}
+                placeholder={t('regForm.confirmPassword')}
                 name="confirmPassword"
                 type="password"
                 id="confirmPassword"
                 className={`form-control ${
                   errors.confirmPassword && touched.confirmPassword
-                    ? "is-invalid"
-                    : ""
+                    ? 'is-invalid'
+                    : ''
                 }`}
               />
               <label htmlFor="confirmPassword">
-                {t("regForm.confirmPassword")}
+                {t('regForm.confirmPassword')}
               </label>
               <CustomErrorMessage name="confirmPassword" />
               {usernameError && <div className="invalid-tooltip" />}
             </div>
             <button type="submit" className="w-100 btn btn-outline-primary">
-              {t("regForm.register")}
+              {t('regForm.register')}
             </button>
           </Form>
         )}
