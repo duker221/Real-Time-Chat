@@ -21,11 +21,5 @@
   "homepage": "https://github.com/duker221/frontend-project-12#readme",
   "dependencies": {
     "@hexlet/chat-server": "^2.0.3",
-    "bootstrap": "^5.3.3",
-    "formik": "^2.4.6",
-    "react-bootstrap": "^2.10.4",
-    "react-scripts": "^3.0.1",
-    "redux": "^5.0.1",
-    "reusify": "^1.0.4"
   }
 }
