@@ -1,7 +1,7 @@
 {
   "name": "@hexlet/code",
   "version": "1.0.0",
-  "description": "[![Actions Status](https://github.com/duker221/frontend-project-12/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/duker221/frontend-project-12/actions)",
+  "description": "Hexlet Chat is a simplified version of Slack written in React. You can test it yourself, try to register or log in with a test account: login: admin; password: admin",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
