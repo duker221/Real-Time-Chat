@@ -1,12 +1,13 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import routes from '../routes';
 
 export const fetchMessages = createAsyncThunk(
   'messages/fetchMessages',
   async (token) => {
     try {
-      const response = await axios.get('/api/v1/messages', {
+      const response = await axios.get(routes.messages, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -23,7 +24,7 @@ export const sendMessage = createAsyncThunk(
   'messages/sendMessage',
   async ({ message, token }) => {
     try {
-      const response = await axios.post('/api/v1/messages', message, {
+      const response = await axios.post(routes.messages, message, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -7,26 +7,30 @@ import Chat from './components/Chat/Chat';
 import ProtectedRoute from './components/ProtectedRoute';
 import RegistrationPage from './components/Registration/Registration';
 import 'react-toastify/dist/ReactToastify.css';
+import routes from './routes';
+import { ProfanityProvider } from './components/ProfanityContext';
 
 const App = () => (
-  <Router>
-    <div className="d-flex flex-column h-100">
-      <Routes>
-        <Route
-          path="/"
-          element={(
-            <ProtectedRoute>
-              <Chat />
-            </ProtectedRoute>
-          )}
-        />
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<NotFoundPage />} />
-        <Route path="/signup" element={<RegistrationPage />} />
-      </Routes>
-    </div>
-    <ToastContainer />
-  </Router>
+  <ProfanityProvider>
+    <Router>
+      <div className="d-flex flex-column h-100">
+        <Routes>
+          <Route
+            path={routes.chat}
+            element={(
+              <ProtectedRoute>
+                <Chat />
+              </ProtectedRoute>
+            )}
+          />
+          <Route path={routes.loginPage} element={<Login />} />
+          <Route path={routes.notFoundPage} element={<NotFoundPage />} />
+          <Route path={routes.signUpPage} element={<RegistrationPage />} />
+        </Routes>
+      </div>
+      <ToastContainer />
+    </Router>
+  </ProfanityProvider>
 );
 
 export default App;

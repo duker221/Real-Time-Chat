@@ -8,13 +8,17 @@ import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 import { editChannel, fetchChannels } from '../../slices/channelsSlice';
-import leoProfanity from '../../leoProfanityConfig';
+import { useProfanityFilter } from '../ProfanityContext';
 
 const EditChannelModal = ({
   onClose, isModalOpen, channel, token,
 }) => {
   const { t } = useTranslation();
-  const createValidationSchema = (channels) => yup.object().shape({
+  const filter = useProfanityFilter();
+  const dispatch = useDispatch();
+  const channels = useSelector((state) => state.channels.channels);
+
+  const createValidationSchema = (channels) => yup.object().shape({ // eslint-disable-line no-shadow
     name: yup
       .string()
       .trim()
@@ -23,20 +27,18 @@ const EditChannelModal = ({
       .max(20, t('regForm.charactersCount'))
       .notOneOf(channels, t('validation.uniqName')),
   });
-  const dispatch = useDispatch();
-  const channels = useSelector((state) => state.channels.channels);
 
   const formik = useFormik({
     initialValues: {
       name: channel ? channel.name : '',
     },
     validationSchema: createValidationSchema(
-      channels.map((channel) => channel.name), // eslint-disable-line no-shadow
+      channels.map((ch) => ch.name), // eslint-disable-line no-shadow
     ),
     onSubmit: async (values, { setSubmitting }) => {
       try {
         setSubmitting(true);
-        const cleanedName = leoProfanity.clean(values.name);
+        const cleanedName = filter.clean(values.name);
         await dispatch(
           editChannel({ id: channel.id, token, newName: cleanedName }),
         );
@@ -63,7 +65,7 @@ const EditChannelModal = ({
             <Form.Control
               type="text"
               name="name"
-              value={leoProfanity.clean(formik.values.name) || ''}
+              value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               isInvalid={formik.touched.name && formik.errors.name}
@@ -90,7 +92,6 @@ const EditChannelModal = ({
                 variant="primary"
                 type="submit"
                 disabled={formik.isSubmitting}
-                onClick={formik.handleSubmit}
               >
                 {formik.isSubmitting ? (
                   <Spinner animation="border" size="sm" />

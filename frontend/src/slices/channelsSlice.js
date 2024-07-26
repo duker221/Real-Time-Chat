@@ -1,12 +1,13 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import routes from '../routes';
 
 export const fetchChannels = createAsyncThunk(
   'channels/fetchChannels',
   async (token) => {
     try {
-      const response = await axios.get('/api/v1/channels', {
+      const response = await axios.get(routes.channels, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -27,7 +28,7 @@ export const createChannels = createAsyncThunk(
   async ({ name, token }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        'api/v1/channels',
+        routes.channels,
         { name },
         {
           headers: {
@@ -47,7 +48,7 @@ export const removeChannel = createAsyncThunk(
   'channels/removeChannel',
   async ({ id, token }) => {
     try {
-      await axios.delete(`/api/v1/channels/${id}`, {
+      await axios.delete(`${routes.channels}/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -65,7 +66,7 @@ export const editChannel = createAsyncThunk(
   async ({ id, token, newName }) => {
     try {
       const response = await axios.patch(
-        `/api/v1/channels/${id}`,
+        `${routes.channels}/${id}`,
         { name: newName },
         {
           headers: {

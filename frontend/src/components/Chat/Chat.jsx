@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import io from 'socket.io-client';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { useTranslation } from 'react-i18next';
-import leoProfanity from '../../leoProfanityConfig';
+import { useProfanityFilter } from '../ProfanityContext';
 import Navigation from '../Navigation';
 import 'react-toastify/dist/ReactToastify.css';
 import { fetchChannels, addChannel } from '../../slices/channelsSlice';
@@ -34,6 +34,7 @@ const Chat = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [channelToDelete, setChannelToDelete] = useState(null);
   const { t } = useTranslation();
+  const filter = useProfanityFilter();
   const activeChannelMessage = channels[activeChannel]
     ? messages.filter(
       (message) => message.channelId === channels[activeChannel].id,
@@ -79,7 +80,7 @@ const Chat = () => {
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
     const messageBody = e.target.body.value;
-    const cleanMessage = leoProfanity.clean(messageBody);
+    const cleanMessage = filter.clean(messageBody);
     if (cleanMessage && channels[activeChannel] && token) {
       const message = {
         body: cleanMessage,
@@ -164,7 +165,7 @@ const Chat = () => {
                       onClick={() => setActiveChannel(index)}
                     >
                       <span className="me-1">#</span>
-                      {leoProfanity.clean(channel.name)}
+                      {filter.clean(channel.name)}
                     </button>
 
                     {channel.removable && (
