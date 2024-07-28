@@ -1,14 +1,17 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import Form from './Form';
 import Navigation from './Navigation';
+import routes from '../routes';
 
 const Login = () => {
   const navigate = useNavigate();
+  const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
-    if (!localStorage.getItem('token')) {
-      navigate('/login');
+    if (!token) {
+      navigate(routes.loginPage);
     }
   }, [navigate]);
   return (

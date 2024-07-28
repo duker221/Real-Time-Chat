@@ -1,9 +1,10 @@
 import React from 'react';
+import routes from '../routes';
 
 const Navigation = ({ child, token }) => (
   <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
     <div className="container">
-      <a className="navbar-brand" href={token ? '/chat' : '/'}>Hexlet Chat</a>
+      <a className="navbar-brand" href={token ? routes.loginPage : '/'}>Hexlet Chat</a>
       {child}
     </div>
   </nav>

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-
+import routes from '../routes';
 import myImage from '../img/hello.jpg';
 import { loginUser } from '../slices/authSlice';
 import 'react-toastify/dist/ReactToastify.css';
@@ -82,7 +82,7 @@ const Form = () => {
               <label htmlFor="password">{t('loginPage.password')}</label>
               {loginError ? (
                 <div className="invalid-tooltip">
-                  Неверные имя пользователя или пароль
+                  {t('loginPage.loginError')}
                 </div>
               ) : null}
             </div>
@@ -99,7 +99,7 @@ const Form = () => {
           <div className="text-center">
             <span>{t('loginPage.withoutAcc')}</span>
             &nbsp;
-            <a href="/signup">{t('loginPage.reg')}</a>
+            <a href={routes.signUpPage}>{t('loginPage.reg')}</a>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import i18n from '../i18n';
 import routes from '../routes';
 
 export const loginUser = createAsyncThunk(
@@ -32,7 +33,7 @@ export const regUser = createAsyncThunk(
       return response.data;
     } catch (error) {
       if (error.response && error.response.status === 409) {
-        return rejectWithValue('Такой пользователь уже существует');
+        return rejectWithValue(i18n.t('regForm.regError'));
       }
       return rejectWithValue(error.response.data);
     }
