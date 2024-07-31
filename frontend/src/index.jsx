@@ -7,6 +7,7 @@ import Rollbar from 'rollbar';
 import i18n from './i18n';
 import App from './App';
 import store from './slices/index.js';
+import 'react-toastify/dist/ReactToastify.css';
 
 const rollbar = new Rollbar({
   accessToken: process.env.REACT_APP_ROLLBAR_ACCESS_TOKEN,

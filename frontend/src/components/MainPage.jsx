@@ -13,7 +13,7 @@ const Login = () => {
     if (!token) {
       navigate(routes.loginPage);
     }
-  }, [navigate]);
+  }, [navigate, token]);
   return (
     <>
       <Navigation />

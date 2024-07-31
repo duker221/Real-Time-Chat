@@ -30,7 +30,7 @@ const Form = () => {
         .unwrap()
         .then((originalPromiseResult) => {
           console.log(originalPromiseResult);
-          navigate('/');
+          navigate(routes.chat);
         })
         .catch((e) => {
           if (e.statusCode === 401) {

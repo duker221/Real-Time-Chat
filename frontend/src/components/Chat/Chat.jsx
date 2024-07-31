@@ -1,22 +1,20 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import io from 'socket.io-client';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { useTranslation } from 'react-i18next';
+import QuitBtn from '../QuitBtn';
 import { useProfanityFilter } from '../ProfanityContext';
 import Navigation from '../Navigation';
-import 'react-toastify/dist/ReactToastify.css';
 import { fetchChannels, addChannel } from '../../slices/channelsSlice';
 import {
   fetchMessages,
   addMessage,
-  sendMessage,
+  sendMessage as sendMessageSlice,
 } from '../../slices/messageSlice';
 import NewChannelModal from '../Modal/CreateNewChannel';
 import EditChannelModal from '../Modal/EditChannelName';
 import RemoveChannel from '../Modal/RemoveChannel';
-
-import QuitBtn from '../Button/QuitBtn';
+import { initializeSocket, sendMessage } from '../../socketInit.js';
 
 const Chat = () => {
   const token = useSelector((state) => state.auth.token);
@@ -25,8 +23,6 @@ const Chat = () => {
   const channels = useSelector((state) => state.channels.channels);
   const [activeChannel, setActiveChannel] = useState(0);
   const messages = useSelector((state) => state.message.messages);
-  const [messageCount, setMessageCount] = useState(0); // eslint-disable-line no-unused-vars
-  const [socket, setSocket] = useState(null); // eslint-disable-line no-unused-vars
   const [isModalOpen, setIsModalOpen] = useState(false);
   const channelNames = channels.map((channel) => channel.name);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -49,33 +45,22 @@ const Chat = () => {
   }, [dispatch, token]);
 
   useEffect(() => {
-    if (messages.length > 0) {
-      setMessageCount(messages.length);
-    }
-  }, [messages]);
-
-  const setupSocket = useCallback(() => {
-    const newSocket = io();
-    setSocket(newSocket);
-
-    newSocket.on('newMessage', (newMessage) => {
+    const handleMessage = (newMessage) => {
       if (newMessage.username !== username) {
         dispatch(addMessage(newMessage));
       }
-    });
+    };
 
-    newSocket.on('newChannel', (newChannel) => {
+    const handleChannel = (newChannel) => {
       dispatch(addChannel(newChannel));
-    });
+    };
+
+    const cleanupSocket = initializeSocket(handleMessage, handleChannel);
 
     return () => {
-      newSocket.disconnect();
+      cleanupSocket();
     };
-  }, [dispatch, username]);
-
-  useEffect(() => {
-    setupSocket();
-  }, [setupSocket]);
+  }, [dispatch, token, username]);
 
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
@@ -88,7 +73,8 @@ const Chat = () => {
         username,
       };
       try {
-        await dispatch(sendMessage({ message, token }));
+        await dispatch(sendMessageSlice({ message, token }));
+        sendMessage(message);
         e.target.body.value = '';
       } catch (error) {
         console.error('Ошибка при отправке сообщения:', error);
@@ -245,11 +231,7 @@ const Chat = () => {
                       placeholder={t('mainPage.enterMessage')}
                       className="border-0 p-0 ps-2 form-control"
                     />
-                    <button
-                      type="submit"
-                      disabled=""
-                      className="btn btn-group-vertical"
-                    >
+                    <button type="submit" className="btn btn-group-vertical">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 16 16"
