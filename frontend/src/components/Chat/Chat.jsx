@@ -14,7 +14,7 @@ import {
 import NewChannelModal from '../Modal/CreateNewChannel';
 import EditChannelModal from '../Modal/EditChannelName';
 import RemoveChannel from '../Modal/RemoveChannel';
-import { initializeSocket, sendMessage } from '../../socketInit.js';
+import { initializeSocket } from '../../socketInit.js';
 
 const Chat = () => {
   const token = useSelector((state) => state.auth.token);
@@ -74,7 +74,6 @@ const Chat = () => {
       };
       try {
         await dispatch(sendMessageSlice({ message, token }));
-        sendMessage(message);
         e.target.body.value = '';
       } catch (error) {
         console.error('Ошибка при отправке сообщения:', error);
