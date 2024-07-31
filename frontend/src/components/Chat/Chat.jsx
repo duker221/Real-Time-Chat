@@ -14,7 +14,7 @@ import {
 import NewChannelModal from '../Modal/CreateNewChannel';
 import EditChannelModal from '../Modal/EditChannelName';
 import RemoveChannel from '../Modal/RemoveChannel';
-import { initializeSocket } from '../../socketInit.js';
+import setupSocket from '../../socketInit';
 
 const Chat = () => {
   const token = useSelector((state) => state.auth.token);
@@ -25,6 +25,7 @@ const Chat = () => {
   const messages = useSelector((state) => state.message.messages);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const channelNames = channels.map((channel) => channel.name);
+  const [socket, setSocket] = useState(null); // eslint-disable-line no-unused-vars
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingChannel, setEditingChannel] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -45,23 +46,13 @@ const Chat = () => {
   }, [dispatch, token]);
 
   useEffect(() => {
-    const handleMessage = (newMessage) => {
-      if (newMessage.username !== username) {
-        dispatch(addMessage(newMessage));
-      }
-    };
-
-    const handleChannel = (newChannel) => {
-      dispatch(addChannel(newChannel));
-    };
-
-    const cleanupSocket = initializeSocket(handleMessage, handleChannel);
+    const newSocket = setupSocket(dispatch, username, addMessage, addChannel);
+    setSocket(newSocket);
 
     return () => {
-      cleanupSocket();
+      newSocket.disconnect();
     };
-  }, [dispatch, token, username]);
-
+  }, [dispatch, username, addMessage, addChannel]);
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
     const messageBody = e.target.body.value;

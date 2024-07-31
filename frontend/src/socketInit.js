@@ -1,38 +1,19 @@
 import io from 'socket.io-client';
 
-let socket = null;
+const setupSocket = (dispatch, username, addMessage, addChannel) => {
+  const newSocket = io();
 
-export const initializeSocket = (onMessage, onChannel) => {
-  if (!socket) {
-    socket = io(); // Убедитесь, что URL правильный
-
-    socket.on('newMessage', (message) => {
-      if (typeof onMessage === 'function') {
-        onMessage(message);
-      }
-    });
-
-    socket.on('newChannel', (channel) => {
-      if (typeof onChannel === 'function') {
-        onChannel(channel);
-      }
-    });
-  }
-
-  return () => {
-    if (socket) {
-      socket.disconnect();
-      socket = null;
+  newSocket.on('newMessage', (newMessage) => {
+    if (newMessage.username !== username) {
+      dispatch(addMessage(newMessage));
     }
-  };
+  });
+
+  newSocket.on('newChannel', (newChannel) => {
+    dispatch(addChannel(newChannel));
+  });
+
+  return newSocket;
 };
 
-export const sendMessage = (message) => {
-  if (socket) {
-    socket.emit('sendMessage', message, (ack) => {
-      console.log('Server acknowledged:', ack);
-    });
-  } else {
-    console.error('Socket not initialized');
-  }
-};
+export default setupSocket;
