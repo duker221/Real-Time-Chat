@@ -38,7 +38,6 @@ export const createChannels = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.log('Ошибка при создании канала');
       return rejectWithValue(error.response.data);
     }
   },
@@ -55,7 +54,6 @@ export const removeChannel = createAsyncThunk(
       });
       return { id };
     } catch (error) {
-      console.log('Не удалось удалить канал', error);
       throw error;
     }
   },
@@ -76,7 +74,6 @@ export const editChannel = createAsyncThunk(
       );
       return { id, newName: response.data.name };
     } catch (error) {
-      console.log('Не удалось переименовать канал');
       throw error;
     }
   },

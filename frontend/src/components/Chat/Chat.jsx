@@ -39,11 +39,15 @@ const Chat = () => {
   const channelsRef = useRef();
   const messagesRef = useRef();
   const [isAtBottom, setIsAtBottom] = useState(true);
+  const [scrollToBottom, setScrollToBottom] = useState(true);
+  const inputRef = useRef();
 
-  const scrollToBottom = (ref) => {
-    if (ref.current && (isAtBottom)) {
-      ref.current.scrollIntoView({ behavior: 'smooth' });
-      ref.current.scrollTop = ref.current.scrollHeight;
+  const scrollToBottomIfNeeded = () => {
+    if (messagesRef.current) {
+      if (scrollToBottom || isAtBottom) {
+        messagesRef.current.scrollIntoView({ behavior: 'smooth' });
+        messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+      }
     }
   };
 
@@ -54,6 +58,9 @@ const Chat = () => {
         const isBottom = container.scrollHeight - container.scrollTop
           === container.clientHeight;
         setIsAtBottom(isBottom);
+        if (isBottom) {
+          setScrollToBottom(true);
+        }
       }
     };
 
@@ -70,12 +77,8 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
-    scrollToBottom(messagesRef);
+    scrollToBottomIfNeeded();
   }, [messages]);
-
-  useEffect(() => {
-    scrollToBottom(channelsRef);
-  }, [channels]);
 
   const activeChannelMessage = channels[activeChannel]
     ? messages.filter(
@@ -89,6 +92,7 @@ const Chat = () => {
         if (token) {
           await dispatch(fetchChannels(token));
           await dispatch(fetchMessages(token));
+          inputRef.current.focus();
         }
       } catch (error) {
         if (error.status === 401) {
@@ -99,7 +103,7 @@ const Chat = () => {
       }
     };
     fetchData();
-  }, [dispatch, token, navigate]);
+  }, [dispatch, token, navigate, scrollToBottom]);
 
   useEffect(() => {
     const newSocket = setupSocket(dispatch, username, addMessage, addChannel);
@@ -123,6 +127,8 @@ const Chat = () => {
       try {
         await dispatch(sendMessageSlice({ message, token }));
         e.target.body.value = '';
+        setScrollToBottom(true);
+        inputRef.current.focus();
       } catch (error) {
         console.error('Ошибка при отправке сообщения:', error);
       }
@@ -151,6 +157,13 @@ const Chat = () => {
   const handleCloseEditModal = () => {
     setIsEditModalOpen(false);
     setEditingChannel(null);
+  };
+
+  const handleChannelClick = (selectedChannelIndex) => {
+    setActiveChannel(selectedChannelIndex);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   };
 
   return (
@@ -192,7 +205,7 @@ const Chat = () => {
                       className={`w-100 rounded-0 text-start text-truncate btn ${
                         index === activeChannel ? 'btn-secondary' : ''
                       }`}
-                      onClick={() => setActiveChannel(index)}
+                      onClick={() => handleChannelClick(index)}
                     >
                       <span className="me-1">#</span>
                       {filter.clean(channel.name)}
@@ -262,6 +275,7 @@ const Chat = () => {
                     {message.body}
                   </div>
                 ) : null))}
+                <div ref={messagesRef} />
               </div>
               <div className="mt-auto px-5 py-3">
                 <form
@@ -275,6 +289,7 @@ const Chat = () => {
                       aria-label="Новое сообщение"
                       placeholder={t('mainPage.enterMessage')}
                       className="border-0 p-0 ps-2 form-control"
+                      ref={inputRef}
                     />
                     <button type="submit" className="btn btn-group-vertical">
                       <svg

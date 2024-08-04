@@ -46,7 +46,7 @@ const ru = {
       },
     },
     regForm: {
-      regError: 'Такой пользователь уже существует',
+      regErrors: 'Такой пользователь уже существует',
       register: 'Зарегистрироваться',
       confirmPassword: 'Подтвердите пароль',
       charactersCount: 'От 3 до 20 символов',

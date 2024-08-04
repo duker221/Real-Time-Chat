@@ -10,7 +10,7 @@ import regImage from '../../img/reg.jpg';
 import { regUser } from '../../slices/authSlice';
 
 const CustomErrorMessage = ({ name }) => {
-  const [field, meta] = useField(name); // eslint-disable-line no-unused-vars
+  const [field, meta] = useField(name); // eslint-disable-line
   return meta.touched && meta.error ? (
     <div className="invalid-tooltip">{meta.error}</div>
   ) : null;
@@ -20,16 +20,17 @@ const RegistrationForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { error } = useSelector((state) => state.auth);
-  const [usernameError, setUsernameError] = useState(null);
+  const [apiError, setApiError] = useState(null);
   const { t } = useTranslation();
+
   useEffect(() => {
-    if (error === t('regForm.regError')) {
-      setUsernameError(error);
-      console.log(error);
+    if (error && error.message === 'Username already exists') {
+      setApiError(t('regForm.regError'));
     } else {
-      setUsernameError(null);
+      setApiError(null);
     }
   }, [error, t]);
+
   const loginSchema = yup.object().shape({
     name: yup
       .string()
@@ -71,12 +72,19 @@ const RegistrationForm = () => {
             if (regUser.fulfilled.match(resultAction)) {
               navigate('/');
             } else {
-              throw resultAction.payload;
+              throw new Error(resultAction.error.message || 'Unknown error');
             }
           } catch (regError) {
-            if (regError === t('regForm.regError')) {
-              setErrors({ name: regError });
-            }
+            const errorMessage = regError.message === 'Username already exists'
+              ? t('regForm.regError')
+              : t('regForm.regErrors');
+
+            setErrors({
+              name: '',
+              password: '',
+              confirmPassword: errorMessage,
+            });
+            setApiError(errorMessage);
             setSubmitting(false);
           }
         }}
@@ -85,7 +93,7 @@ const RegistrationForm = () => {
           try {
             loginSchema.validateSync(values, { abortEarly: false });
           } catch (err) {
-            err.inner.forEach((error) => { // eslint-disable-line no-shadow
+            err.inner.forEach((error) => { // eslint-disable-line
               validationErrors[error.path] = error.message;
             });
           }
@@ -97,9 +105,7 @@ const RegistrationForm = () => {
             <h1 className="text-center mb-4">{t('loginPage.reg')}</h1>
             <div
               className={`form-floating mb-3 ${
-                (errors.name && touched.name) || usernameError
-                  ? 'has-error'
-                  : ''
+                (errors.name && touched.name) || apiError ? 'has-error' : ''
               }`}
             >
               <Field
@@ -108,7 +114,7 @@ const RegistrationForm = () => {
                 autoComplete="username"
                 id="name"
                 className={`form-control ${
-                  (errors.name && touched.name) || usernameError
+                  (errors.name && touched.name) || apiError
                     ? 'is-invalid'
                     : ''
                 }`}
@@ -117,13 +123,10 @@ const RegistrationForm = () => {
                 {t('regForm.userName')}
               </label>
               <CustomErrorMessage name="name" />
-              {usernameError && (
-                <div className="invalid-tooltip">{usernameError}</div>
-              )}
             </div>
             <div
               className={`form-floating mb-3 ${
-                errors.password && touched.password ? 'has-error' : ''
+                (errors.password && touched.password) || apiError ? 'has-error' : ''
               }`}
             >
               <Field
@@ -133,18 +136,17 @@ const RegistrationForm = () => {
                 type="password"
                 id="password"
                 className={`form-control ${
-                  errors.password && touched.password ? 'is-invalid' : ''
+                  (errors.password && touched.password) || apiError
+                    ? 'is-invalid'
+                    : ''
                 }`}
               />
               <label htmlFor="password">{t('loginPage.password')}</label>
               <CustomErrorMessage name="password" />
-              {usernameError && <div className="invalid-tooltip" />}
             </div>
             <div
               className={`form-floating mb-3 ${
-                errors.confirmPassword && touched.confirmPassword
-                  ? 'has-error'
-                  : ''
+                (errors.confirmPassword && touched.confirmPassword) || apiError ? 'has-error' : ''
               }`}
             >
               <Field
@@ -153,7 +155,7 @@ const RegistrationForm = () => {
                 type="password"
                 id="confirmPassword"
                 className={`form-control ${
-                  errors.confirmPassword && touched.confirmPassword
+                  (errors.confirmPassword && touched.confirmPassword) || apiError
                     ? 'is-invalid'
                     : ''
                 }`}
@@ -162,7 +164,7 @@ const RegistrationForm = () => {
                 {t('regForm.confirmPassword')}
               </label>
               <CustomErrorMessage name="confirmPassword" />
-              {usernameError && <div className="invalid-tooltip" />}
+              {apiError && <div className="invalid-tooltip">{apiError}</div>}
             </div>
             <button type="submit" className="w-100 btn btn-outline-primary">
               {t('regForm.register')}
