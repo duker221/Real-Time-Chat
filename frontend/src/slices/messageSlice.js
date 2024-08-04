@@ -14,6 +14,7 @@ export const fetchMessages = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
+      console.error('Ошибка при загрузке сообщений:', error);
       throw error;
     }
   },
@@ -30,6 +31,7 @@ export const sendMessage = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
+      console.error('Ошибка при отправке сообщения:', error);
       throw error;
     }
   },
