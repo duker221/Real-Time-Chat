@@ -1,20 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Dropdown from 'react-bootstrap/Dropdown';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import Dropdown from 'react-bootstrap/Dropdown';
 import QuitBtn from '../QuitBtn';
-import { useProfanityFilter } from '../ProfanityContext';
 import Navigation from '../Navigation';
+import NewChannelModal from '../Modal/CreateNewChannel';
+import EditChannelModal from '../Modal/EditChannelName';
+import RemoveChannel from '../Modal/RemoveChannel';
+import setupSocket from '../../socketInit';
+import { logoutUser } from '../../slices/authSlice';
 import { fetchChannels, addChannel } from '../../slices/channelsSlice';
 import {
   fetchMessages,
   addMessage,
   sendMessage as sendMessageSlice,
 } from '../../slices/messageSlice';
-import NewChannelModal from '../Modal/CreateNewChannel';
-import EditChannelModal from '../Modal/EditChannelName';
-import RemoveChannel from '../Modal/RemoveChannel';
-import setupSocket from '../../socketInit';
+import routes from '../../routes';
+import { useProfanityFilter } from '../ProfanityContext';
 
 const Chat = () => {
   const token = useSelector((state) => state.auth.token);
@@ -25,13 +28,55 @@ const Chat = () => {
   const messages = useSelector((state) => state.message.messages);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const channelNames = channels.map((channel) => channel.name);
-  const [socket, setSocket] = useState(null); // eslint-disable-line no-unused-vars
+  const [socket, setSocket] = useState(null); // eslint-disable-line
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingChannel, setEditingChannel] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [channelToDelete, setChannelToDelete] = useState(null);
   const { t } = useTranslation();
   const filter = useProfanityFilter();
+  const navigate = useNavigate();
+  const channelsRef = useRef();
+  const messagesRef = useRef();
+  const [isAtBottom, setIsAtBottom] = useState(true);
+
+  const scrollToBottom = (ref) => {
+    if (ref.current && (isAtBottom)) {
+      ref.current.scrollIntoView({ behavior: 'smooth' });
+      ref.current.scrollTop = ref.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const container = messagesRef.current;
+      if (container) {
+        const isBottom = container.scrollHeight - container.scrollTop
+          === container.clientHeight;
+        setIsAtBottom(isBottom);
+      }
+    };
+
+    const container = messagesRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom(messagesRef);
+  }, [messages]);
+
+  useEffect(() => {
+    scrollToBottom(channelsRef);
+  }, [channels]);
+
   const activeChannelMessage = channels[activeChannel]
     ? messages.filter(
       (message) => message.channelId === channels[activeChannel].id,
@@ -39,11 +84,22 @@ const Chat = () => {
     : [];
 
   useEffect(() => {
-    if (token) {
-      dispatch(fetchChannels(token));
-      dispatch(fetchMessages(token));
-    }
-  }, [dispatch, token]);
+    const fetchData = async () => {
+      try {
+        if (token) {
+          await dispatch(fetchChannels(token));
+          await dispatch(fetchMessages(token));
+        }
+      } catch (error) {
+        if (error.status === 401) {
+          dispatch(logoutUser());
+          navigate(routes.loginPage);
+        }
+        console.error('Error fetching channels:', error);
+      }
+    };
+    fetchData();
+  }, [dispatch, token, navigate]);
 
   useEffect(() => {
     const newSocket = setupSocket(dispatch, username, addMessage, addChannel);
@@ -52,7 +108,8 @@ const Chat = () => {
     return () => {
       newSocket.disconnect();
     };
-  }, [dispatch, username, addMessage, addChannel]);
+  }, [dispatch, username]);
+
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
     const messageBody = e.target.body.value;
@@ -72,13 +129,9 @@ const Chat = () => {
     }
   };
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
+  const handleOpenModal = () => setIsModalOpen(true);
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  const handleCloseModal = () => setIsModalOpen(false);
 
   const handleOpenDeleteModal = (channelId) => {
     setChannelToDelete(channelId);
@@ -129,6 +182,7 @@ const Chat = () => {
             <ul
               className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
               id="channels-box"
+              ref={channelsRef}
             >
               {channels.map((channel, index) => (
                 <li className="nav-item w-100" key={channel.id}>
@@ -198,6 +252,7 @@ const Chat = () => {
               <div
                 id="messages-box"
                 className="chat-messages overflow-auto px-5"
+                ref={messagesRef}
               >
                 {messages.map((message) => (message.channelId === channels[activeChannel]?.id ? (
                   <div key={message.id} className="text-break mb-2">
@@ -271,7 +326,11 @@ const Chat = () => {
           onHide={handleCloseDeleteModal}
           channelId={channelToDelete}
           token={token}
-          onChannelDeleted={() => setActiveChannel(0)}
+          onChannelDeleted={() => {
+            if (activeChannel === channelToDelete) {
+              setActiveChannel(0);
+            }
+          }}
         />
       )}
     </>

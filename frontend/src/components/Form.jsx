@@ -20,25 +20,23 @@ const Form = () => {
       username: '',
       password: '',
     },
-    onSubmit: (values) => {
-      dispatch(
-        loginUser({
-          username: values.username,
-          password: values.password,
-        }),
-      )
-        .unwrap()
-        .then((originalPromiseResult) => {
-          console.log(originalPromiseResult);
-          navigate(routes.chat);
-        })
-        .catch((e) => {
-          if (e.statusCode === 401) {
-            setError(true);
-          } else {
-            toast.error(t('toast.errorNetwork'));
-          }
-        });
+    onSubmit: async (values) => {
+      try {
+        await dispatch(
+          loginUser({
+            username: values.username,
+            password: values.password,
+          }),
+        ).unwrap();
+
+        navigate(routes.chat);
+      } catch (e) {
+        if (e.statusCode === 401) {
+          setError(true);
+        } else {
+          toast.error(t('toast.errorNetwork'));
+        }
+      }
     },
   });
 

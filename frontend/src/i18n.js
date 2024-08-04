@@ -8,13 +8,16 @@ const resources = {
 
 const i18n = i18next.createInstance();
 
-i18n.use(initReactI18next).init({
-  resources,
-  lng: 'ru',
-  fallbackLng: 'ru',
-  interpolation: {
-    escapeValue: false,
-  },
-});
+const initI18n = async () => {
+  await i18n.use(initReactI18next).init({
+    resources,
+    lng: 'ru',
+    fallbackLng: 'ru',
+    interpolation: {
+      escapeValue: false,
+    },
+  });
+  return i18n;
+};
 
-export default i18n;
+export default initI18n;

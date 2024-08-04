@@ -1,7 +1,7 @@
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const notyfy = (message) => {
+const notify = (message) => {
   ToastContainer.success(message, {
     position: 'top-right',
     autoClose: 5000,
@@ -13,4 +13,4 @@ const notyfy = (message) => {
   });
 };
 
-export default notyfy;
+export default notify;

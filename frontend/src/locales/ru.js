@@ -12,6 +12,7 @@ const ru = {
       channels: 'Каналы',
       enterMessage: 'Введите сообщение...',
       quitBtn: 'Выйти',
+      newMessage: 'Новое сообщение',
       deleteChannel: 'Удалить',
       renameChannel: 'Переименовать',
       messagesCount: {
